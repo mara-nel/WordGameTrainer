@@ -1,1 +1,1 @@
-# ScrabbleTrainer
+# Word Game Trainer
