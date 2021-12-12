@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Word Game Trainer</title>
+  <meta name="description" content="A place to practice word games.">
+  <meta name="author" content="Wyn Nelson">
+
+  <link rel="icon" href="/favicon.ico">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+
+  <link rel="stylesheet" href="css/styles.css">
+
+</head>
+
+<body>
+  <!-- your content here... -->
+  <div class="wrapper">
+  <h1>Word Game Trainer</h1>
+  <div class="subtitle">practice your power bingo stems</div>
+
+  <section id="challengeDetails">
+    <p class="gameStatus">Current Stem: 
+      <span id='currentStem'></span>
+    </p>
+    <div id="stemProgressWrapper">
+      <p class="gameStatus">? = <span id='currentLetter'></span></p>
+      <p class="gameStatus">Progress: <span id='currentProgress'></span></p>
+    </div>
+    <button type="button" disabled id='nextLetter' autocomplete="off">Next Letter</button>
+  </section>
+
+  <section id="rack">
+    <kbd class="tile">t</kbd>
+    <kbd class="tile">i</kbd>
+    <kbd class="tile">s</kbd>
+    <kbd class="tile">a</kbd>
+    <kbd class="tile">n</kbd>
+    <kbd class="tile">e</kbd>
+    <kbd class="tile" id="blank">*</kbd>
+  </section>
+
+  <form id="field">
+    <input type="text" maxlength="1" autocomplete="off"/>
+    <input type="text" maxlength="1" autocomplete="off"/>
+    <input type="text" maxlength="1" autocomplete="off"/>
+    <input type="text" maxlength="1" autocomplete="off"/>
+    <input type="text" maxlength="1" autocomplete="off"/>
+    <input type="text" maxlength="1" autocomplete="off"/>
+    <input type="text" maxlength="1" autocomplete="off"/>
+    <button type="button" id="clear">Clear</button>
+  </form>
+  <ul id="foundWords">
+  </ul>
+  <p>
+  Sounds by <a href="https://zapsplat.com">Zapsplat.com</a>
+  </p>
+  </div>
+  <script src="js/scripts.js"></script>
+</body>
+</html>
+
