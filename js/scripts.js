@@ -108,7 +108,7 @@ function isValidValue(value) {
 function hideTile(value) {
   let unplayedTiles = document.querySelectorAll('kbd:not(.played).tile');
   for (let i = 0; i < unplayedTiles.length; i++) {
-    if (unplayedTiles[i].innerHTML === value) {
+    if (unplayedTiles[i].innerHTML === value.toLowerCase()) {
       unplayedTiles[i].classList.add('played');
       break;
     }
