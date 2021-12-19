@@ -167,8 +167,27 @@ function updateFoundWords() {
   if (currentlyFoundWords.length === bingoStems[currentStem][currentLetter].length) {
     markSuccess();
   }
-  document.getElementById('foundWords').innerHTML +=
-    `<li>${newWord}</li>`;
+
+  fetch('https://api.dictionaryapi.dev/api/v2/entries/en/'+newWord)
+    .then(response => response.json())
+    .then(function(data) {
+      console.log(data);
+      if (Array.isArray(data)) {
+        //assume definition found
+        document.getElementById('foundWords').innerHTML =
+          `<li>${newWord}: ${data[0].meanings[0].definitions[0].definition}</li>` + 
+          document.getElementById('foundWords').innerHTML;
+      } else {
+        //assume no definition found
+        document.getElementById('foundWords').innerHTML =
+          `<li>${newWord}: definition unavailable</li>` + 
+          document.getElementById('foundWords').innerHTML;
+      }
+    });
+  console.log(newWord);
+  //document.getElementById('foundWords').innerHTML =
+  //  `<li>${newWord}</li>` + 
+  //  document.getElementById('foundWords').innerHTML;
 }
 
 function markSuccess() {
