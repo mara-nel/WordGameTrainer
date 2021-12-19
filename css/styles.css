@@ -18,6 +18,18 @@ section#rack kbd {
   margin-right: auto;
 }
 
+#rackActions {
+  display: flex;
+  flex-direction: row;
+}
+
+#rackActions button {
+  margin-left: 1em;
+}
+#rackActions button:first-child {
+  margin-left: auto;
+}
+
 
 form#field {
   margin-top: 2em;
