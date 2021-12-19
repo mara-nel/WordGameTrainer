@@ -115,7 +115,16 @@ function hideTile(value) {
   }
 }
 
+function shuffleRack() {
+  let rack = document.querySelector('section#rack');
+  for (let i = rack.children.length; i >= 0; i--) {
+    rack.appendChild(rack.children[Math.random() * i | 0]);
+  }
+}
 
+document.getElementById('shuffle').addEventListener('click', function() {
+  shuffleRack();
+});
 
 
 function checkWord() {

@@ -3,6 +3,10 @@ html {
   font-size: 1.2em;
 }
 
+button {
+  margin-left: auto;
+}
+
 
 section#rack {
   display: flex;
@@ -45,7 +49,7 @@ kbd.played {
 }
 
 h1 {
-  margin: 1em 0 .1em 0;
+  margin: 0.25em 0 .1em 0;
 }
 .subtitle {
   text-align: right;
@@ -64,11 +68,14 @@ p.gameStatus {
 
 section#challengeDetails {
   margin-top: 2em;
+  display: flex;
+  flex-direction: column;
 }
 
 #stemProgressWrapper {
   display: flex;
   flex-direction: horizontal;
+  margin-bottom: 0.5em;
 }
 #stemProgressWrapper p:last-child {
   margin-left: auto;
@@ -83,4 +90,6 @@ body {
 }
 .wrapper {
   margin: auto;
+  display: flex;
+  flex-direction: column;
 }
