@@ -36,14 +36,18 @@
   </section>
 
   <section id="rack">
-    <kbd class="tile">t</kbd>
-    <kbd class="tile">i</kbd>
-    <kbd class="tile">s</kbd>
-    <kbd class="tile">a</kbd>
-    <kbd class="tile">n</kbd>
-    <kbd class="tile">e</kbd>
-    <kbd class="tile" id="blank">*</kbd>
+    <kbd class="tile" data-order="1">t</kbd>
+    <kbd class="tile" data-order="2">i</kbd>
+    <kbd class="tile" data-order="3">s</kbd>
+    <kbd class="tile" data-order="4">a</kbd>
+    <kbd class="tile" data-order="5">n</kbd>
+    <kbd class="tile" data-order="6">e</kbd>
+    <kbd class="tile" data-order="7" id="blank">*</kbd>
   </section>
+  <div id="rackActions">
+    <button type="button" id='shuffle'>Shuffle</button>
+    <button type="button" id='unShuffle'>Unshuffle</button>
+  </div>
 
   <form id="field">
     <input type="text" maxlength="1" autocomplete="off"/>

@@ -115,7 +115,34 @@ function hideTile(value) {
   }
 }
 
+function shuffleRack() {
+  let rack = document.querySelector('section#rack');
+  for (let i = rack.children.length; i >= 0; i--) {
+    rack.appendChild(rack.children[Math.random() * i | 0]);
+  }
+}
 
+function unShuffleRack() {
+  var sortByDataOrder = function(a, b) {
+    return a.dataset.order.localeCompare(b.dataset.order);
+  }
+
+  let rack = document.querySelector('section#rack');
+  rackArray = Array.prototype.slice.call(rack.children);
+  rackArray.sort(sortByDataOrder);
+  for (let i=0; i < rackArray.length; i++) {
+    let parent = rackArray[i].parentNode;
+    let detatchedTile = parent.removeChild(rackArray[i]);
+    parent.appendChild(detatchedTile);
+  }
+}
+
+document.getElementById('shuffle').addEventListener('click', function() {
+  shuffleRack();
+});
+document.getElementById('unShuffle').addEventListener('click', function() {
+  unShuffleRack();
+});
 
 
 function checkWord() {
@@ -154,6 +181,7 @@ function markSuccess() {
 };
 
 function goToNextLetter() {
+  unShuffleRack();
   currentLetter = alphabet[alphabet.indexOf(currentLetter) + 1];
   document.getElementById('currentLetter').innerHTML = currentLetter;
   document.getElementById('blank').innerHTML = currentLetter;
