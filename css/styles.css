@@ -10,12 +10,21 @@ button {
 
 section#rack {
   display: flex;
-  margin: 1em 0;
+  margin: 1em 0 .4em 0;
+  //margin: 1em auto;
+  min-height: 50px;
 }
 
 section#rack kbd {
   //position: absolute;
+  //margin-right: auto;
+  margin: .15em .3em .15em 0;
+  margin-left: 0;
+}
+section#rack kbd:last-child {
+  //position: absolute;
   margin-right: auto;
+  //margin: .15em;
 }
 
 #rackActions {
@@ -32,7 +41,11 @@ section#rack kbd {
 
 
 form#field {
-  margin-top: 2em;
+  //margin: 1em auto 1em 0;
+  margin: 1em auto .5em 0;
+  display: flex;
+  align-items: baseline;
+  width: 100%;
 }
 #field input {
   width: 1.5ch;
@@ -42,6 +55,12 @@ form#field {
   border: none;
   border-bottom: 2px solid black;
   text-transform: uppercase;
+  margin-right: .15em;
+}
+
+#field button {
+  //margin-left: min(5px, 2%);
+  margin-left: auto;
 }
  
 kbd.tile {
@@ -58,6 +77,7 @@ kbd.tile {
 
 kbd.played {
   display: none;
+  //visibility: hidden;
 }
 
 h1 {
@@ -70,6 +90,19 @@ h1 {
 ul#foundWords li {
   text-transform: capitalize;
 }
+ul#foundWords li span{
+  text-transform: none;
+  color: #333;
+  font-size: .8em;
+  margin-left: .5em;
+}
+ul#foundWords {
+}
+
+#currentLetter {
+  text-transform: uppercase;
+}
+
 
 p.gameStatus {
   font-size: 1em;
@@ -104,4 +137,7 @@ body {
   margin: auto;
   display: flex;
   flex-direction: column;
+  //padding: 0 1em;
+  max-width: 480px;
+  width: min(480px, 90%);
 }

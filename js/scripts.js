@@ -172,17 +172,17 @@ function updateFoundWords() {
     .then(response => response.json())
     .then(function(data) {
       console.log(data);
+      let definition = '';
       if (Array.isArray(data)) {
         //assume definition found
-        document.getElementById('foundWords').innerHTML =
-          `<li>${newWord}: ${data[0].meanings[0].definitions[0].definition}</li>` + 
-          document.getElementById('foundWords').innerHTML;
+        definition = data[0].meanings[0].definitions[0].definition;
       } else {
         //assume no definition found
-        document.getElementById('foundWords').innerHTML =
-          `<li>${newWord}: definition unavailable</li>` + 
-          document.getElementById('foundWords').innerHTML;
+        definition = 'definition unavailable';
       }
+      document.getElementById('foundWords').innerHTML =
+        `<li>${newWord}:<span class='definition'>${definition}</span></li>` +
+        document.getElementById('foundWords').innerHTML;
     });
   console.log(newWord);
   //document.getElementById('foundWords').innerHTML =
