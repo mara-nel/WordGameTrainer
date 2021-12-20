@@ -37,6 +37,18 @@ const bingoStems = {
 
 const alphabet = 'abcdefghijklmnopqrstuvwxyz';
 
+function initLocalDictionary() {
+  let definedWords = {};
+  if (window.localStorage.getItem('definedWords')) {
+    definedWords = JSON.parse(window.localStorage.getItem('definedWords'));
+  } else {
+    window.localStorage.setItem('definedWords', JSON.stringify(definedWords));
+  }
+  
+  return definedWords;
+};
+let definedWords = initLocalDictionary();
+
 let currentStem = Object.keys(bingoStems)[0];
 let currentLetter = Object.keys(bingoStems[currentStem])[0];
 let currentlyFoundWords = [];
@@ -167,8 +179,35 @@ function updateFoundWords() {
   if (currentlyFoundWords.length === bingoStems[currentStem][currentLetter].length) {
     markSuccess();
   }
-  document.getElementById('foundWords').innerHTML +=
-    `<li>${newWord}</li>`;
+
+  if (definedWords[newWord]) {
+    document.getElementById('foundWords').innerHTML =
+      `<li>${newWord}:<span class='definition'>${definedWords[newWord]}</span></li>` +
+      document.getElementById('foundWords').innerHTML;
+  } else {
+    fetch('https://api.dictionaryapi.dev/api/v2/entries/en/'+newWord)
+      .then(response => response.json())
+      .then(function(data) {
+        console.log(data);
+        let definition = '';
+        if (Array.isArray(data)) {
+          //assume definition found
+          definition = data[0].meanings[0].definitions[0].definition;
+        } else {
+          //assume no definition found
+          definition = 'definition unavailable';
+        }
+        definedWords[newWord] = definition;
+        window.localStorage.setItem('definedWords', JSON.stringify(definedWords));
+        document.getElementById('foundWords').innerHTML =
+          `<li>${newWord}:<span class='definition'>${definition}</span></li>` +
+          document.getElementById('foundWords').innerHTML;
+      });
+  }
+  console.log(newWord, definedWords);
+  //document.getElementById('foundWords').innerHTML =
+  //  `<li>${newWord}</li>` + 
+  //  document.getElementById('foundWords').innerHTML;
 }
 
 function markSuccess() {
