@@ -27,17 +27,17 @@ section#rack kbd:last-child {
   //margin: .15em;
 }
 
-#rackActions {
+.buttonWrapper {
   display: flex;
   flex-direction: row;
 }
-
-#rackActions button {
+.buttonWrapper button {
   margin-left: 1em;
 }
-#rackActions button:first-child {
+.buttonWrapper button:first-child {
   margin-left: auto;
 }
+
 
 
 form#field {

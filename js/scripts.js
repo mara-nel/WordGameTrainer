@@ -149,7 +149,7 @@ let definedWords = initLocalDictionary();
 
 let currentStem = Object.keys(bingoStems)[0];
 let currentLetter = Object.keys(bingoStems[currentStem])[0];
-let currentlyFoundWords = [];
+let wordsFoundForCurrentLetter = [];
 
 const inputs = document.querySelectorAll('#field input');
 const field = document.getElementById('field');
@@ -241,7 +241,7 @@ function unShuffleRack() {
   }
 
   let rack = document.querySelector('section#rack');
-  rackArray = Array.prototype.slice.call(rack.children);
+  let rackArray = Array.prototype.slice.call(rack.children);
   rackArray.sort(sortByDataOrder);
   for (let i=0; i < rackArray.length; i++) {
     let parent = rackArray[i].parentNode;
@@ -258,11 +258,44 @@ document.getElementById('unShuffle').addEventListener('click', function() {
 });
 
 
+document.getElementById('yield').addEventListener('click', function() {
+  yield();
+});
+
+function showUnfoundWords() {
+  bingoStems[currentStem][currentLetter].forEach(word => {
+    if (!wordsFoundForCurrentLetter.includes(word)) {
+      if (definedWords[word]) {
+        addMissedWord(word);
+      } else {
+        defineWord(word).then(definition => {
+          definedWords[word] = definition;
+          window.localStorage.setItem('definedWords', JSON.stringify(definedWords));
+          addMissedWord(word);
+        });
+      }
+      wordsFoundForCurrentLetter.push(word);
+      updateCurrentLetterProgressTracking();
+    }
+  });
+
+}
+
+function updateCurrentLetterProgressTracking() {
+  document.getElementById('currentProgress').innerHTML = 
+    wordsFoundForCurrentLetter.length + ' of ' + bingoStems[currentStem][currentLetter].length;
+}
+
+function yield() {
+  showUnfoundWords();
+  document.getElementById('nextLetter').disabled = false;
+}
+
 function checkWord() {
   if (areAllInputsNonEmpty()) {
     let inputtedWord = getInputtedWord();
     let valid = bingoStems[currentStem][currentLetter].includes(inputtedWord);
-    if (valid && !currentlyFoundWords.includes(inputtedWord)) {
+    if (valid && !wordsFoundForCurrentLetter.includes(inputtedWord)) {
       updateFoundWords();
     }
   } 
@@ -270,26 +303,33 @@ function checkWord() {
 
 function updateFoundWords() {
   let newWord = getInputtedWord();
-  currentlyFoundWords.push(newWord);
-  document.getElementById('currentProgress').innerHTML = 
-    currentlyFoundWords.length + ' of ' + bingoStems[currentStem][currentLetter].length;
+  wordsFoundForCurrentLetter.push(newWord);
+  updateCurrentLetterProgressTracking();
 
   var audio = new Audio('sounds/zapsplat_pop.mp3');
   audio.play();
 
-  if (currentlyFoundWords.length === bingoStems[currentStem][currentLetter].length) {
+  if (wordsFoundForCurrentLetter.length === bingoStems[currentStem][currentLetter].length) {
     markSuccess();
   }
 
   if (definedWords[newWord]) {
-    document.getElementById('foundWords').innerHTML =
-      `<li>${newWord}:<span class='definition'>${definedWords[newWord]}</span></li>` +
-      document.getElementById('foundWords').innerHTML;
+    addWord(newWord);
   } else {
-    fetch('https://api.dictionaryapi.dev/api/v2/entries/en/'+newWord)
+    defineWord(newWord).then(definition => {
+      definedWords[newWord] = definition;
+      window.localStorage.setItem('definedWords', JSON.stringify(definedWords));
+      addWord(newWord);
+    });
+  }
+  console.log(newWord, definedWords);
+}
+
+function defineWord(word) {
+  return new Promise((resolve, reject) => {
+    fetch('https://api.dictionaryapi.dev/api/v2/entries/en/'+word)
       .then(response => response.json())
       .then(function(data) {
-        console.log(data);
         let definition = '';
         if (Array.isArray(data)) {
           //assume definition found
@@ -298,17 +338,29 @@ function updateFoundWords() {
           //assume no definition found
           definition = 'definition unavailable';
         }
-        definedWords[newWord] = definition;
-        window.localStorage.setItem('definedWords', JSON.stringify(definedWords));
-        document.getElementById('foundWords').innerHTML =
-          `<li>${newWord}:<span class='definition'>${definition}</span></li>` +
-          document.getElementById('foundWords').innerHTML;
+        resolve(definition);
       });
-  }
-  console.log(newWord, definedWords);
-  //document.getElementById('foundWords').innerHTML =
-  //  `<li>${newWord}</li>` + 
-  //  document.getElementById('foundWords').innerHTML;
+  });
+}
+
+function addWord(wordToAdd) {
+  let li = document.createElement('li');
+  li.innerHTML = wordToAdd + ':';
+  let definition = document.createElement('span');
+  definition.innerHTML = definedWords[wordToAdd];
+  definition.classList.add('definition');
+  li.appendChild(definition);
+  document.getElementById('foundWords').prepend(li);
+}
+
+function addMissedWord(wordToAdd) {
+  let li = document.createElement('li');
+  li.innerHTML = wordToAdd + ' (missed):';
+  let definition = document.createElement('span');
+  definition.innerHTML = definedWords[wordToAdd];
+  definition.classList.add('definition');
+  li.appendChild(definition);
+  document.getElementById('foundWords').prepend(li);
 }
 
 function markSuccess() {
@@ -338,9 +390,9 @@ function resetForNewLetter() {
   document.getElementById('currentLetter').innerHTML = currentLetter;
   document.getElementById('blank').innerHTML = currentLetter;
 
-  currentlyFoundWords = [];
+  wordsFoundForCurrentLetter = [];
   document.getElementById('currentProgress').innerHTML = 
-    currentlyFoundWords.length + ' of ' + bingoStems[currentStem][currentLetter].length;
+    wordsFoundForCurrentLetter.length + ' of ' + bingoStems[currentStem][currentLetter].length;
   
   clearField();
   if (bingoStems[currentStem][currentLetter].length !== 0) {

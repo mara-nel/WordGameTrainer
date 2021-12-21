@@ -33,7 +33,10 @@
       <p class="gameStatus">? = <span id='currentLetter'></span></p>
       <p class="gameStatus">Progress: <span id='currentProgress'></span></p>
     </div>
-    <button type="button" disabled id='nextLetter' autocomplete="off">Next Letter</button>
+    <div class="buttonWrapper">
+      <button type="button" id='yield' autocomplete="off">I Yield</button>
+      <button type="button" disabled id='nextLetter' autocomplete="off">Next Letter</button>
+    </div>
   </section>
 
   <section id="rack">
@@ -45,7 +48,7 @@
     <kbd class="tile" data-order="6">e</kbd>
     <kbd class="tile" data-order="7" id="blank">*</kbd>
   </section>
-  <div id="rackActions">
+  <div id="rackActions" class="buttonWrapper">
     <button type="button" id='shuffle'>Shuffle</button>
     <button type="button" id='unShuffle'>Unshuffle</button>
   </div>
