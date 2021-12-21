@@ -32,6 +32,41 @@ const bingoStems = {
     x : ['antisex', 'sextain'],
     y : [],
     z : ['zaniest', 'zeatins']
+  },
+  'satire' : {
+    a : ['aristae', 'asteria', 'atresia'],
+    b : ['baiters', 'barites', 'rebaits', 'terbias'],
+    c : ['atresic', 'cristae', 'raciest', 'stearic'],
+    d : ['aridest', 'astride', 'diaster', 'disrate', 
+        'staider', 'tardies', 'tirades'],
+    e : ['aeriest', 'seriate'],
+    f : ['fairest'],
+    g : ['aigrets', 'gaiters', 'seagirt', 'stagier', 
+        'triages'],
+    h : ['hastier'],
+    i : ['airiest'],
+    j : [],
+    k : [],
+    l : ['realist', 'retails', 'saltier', 'saltire',
+        'slatier', 'tailers'],
+    m : ['imarets', 'maestri', 'misrate', 'smartie'],
+    n : ['anestri', 'antsier', 'nastier', 'ratines', 
+        'retains', 'retinas', 'retsina', 'stainer', 
+        'stearin'],
+    o : [],
+    p : ['parties', 'pastier', 'piaster', 'piastre',
+        'pirates', 'praties', 'traipse'],
+    q : [],
+    r : ['artiser', 'tarries', 'tarsier'],  
+    s : ['artsies', 'satires'],
+    t : ['artiest', 'artiste', 'attires', 'iratest', 
+        'ratites', 'striate', 'tastier'],
+    u : [],
+    v : ['raviest', 'vastier', 'veritas'],
+    w : ['waister', 'waiters', 'wariest', 'wastrie'],
+    x : [],
+    y : [],
+    z : []
   }
 };
 
@@ -47,21 +82,51 @@ function initLocalDictionary() {
   
   return definedWords;
 };
+
+function initStemSelect() {
+  let stems = Object.keys(bingoStems);
+  let select = document.getElementById('stemSelect');
+  stems.forEach(function(stem) {
+    let option = document.createElement('option');
+    option.value = stem;
+    option.innerHTML = stem;
+    select.appendChild(option);
+  });
+}
+
+initStemSelect();
+
+document.getElementById('stemSelect').addEventListener('change', function() {
+  switchStem();
+});
+
+function switchStem() {
+  currentLetter = 'a';
+  currentStem = document.getElementById('stemSelect').value;
+
+  resetForNewLetter();
+  resetForNewStem();
+  //shuffle letters
+  unShuffleRack();
+  console.log('starting over');
+}
+
+
 let definedWords = initLocalDictionary();
 
 let currentStem = Object.keys(bingoStems)[0];
 let currentLetter = Object.keys(bingoStems[currentStem])[0];
 let currentlyFoundWords = [];
-document.getElementById('currentStem').innerHTML = currentStem + '+?';
-document.getElementById('currentLetter').innerHTML = currentLetter;
-document.getElementById('blank').innerHTML = currentLetter;
-document.getElementById('currentProgress').innerHTML = 
-  currentlyFoundWords.length + ' of ' + bingoStems[currentStem][currentLetter].length;
-
-
 
 const inputs = document.querySelectorAll('#field input');
 const field = document.getElementById('field');
+
+resetForNewLetter();
+
+
+
+
+
 
 inputs.forEach(function(input, key) {
   // clicking input selects content so that typing a letter replaces it
@@ -93,6 +158,9 @@ inputs.forEach(function(input, key) {
     }
   });
 });
+
+
+
 
 function syncPlayedTiles() {
   resetPlayedTiles();
@@ -222,6 +290,18 @@ function markSuccess() {
 function goToNextLetter() {
   unShuffleRack();
   currentLetter = alphabet[alphabet.indexOf(currentLetter) + 1];
+  resetForNewLetter();
+}
+
+function resetForNewStem() {
+  let rack = document.getElementById('rack');
+  for (let i = 0; i < rack.children.length - 1; i++) {
+    rack.children[i].innerHTML = currentStem[i];
+  }
+}
+
+
+function resetForNewLetter() {
   document.getElementById('currentLetter').innerHTML = currentLetter;
   document.getElementById('blank').innerHTML = currentLetter;
 
@@ -236,6 +316,7 @@ function goToNextLetter() {
     markSuccess();
   }
 }
+
 
 document.getElementById('nextLetter').addEventListener('click', function() {
   goToNextLetter();

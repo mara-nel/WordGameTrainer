@@ -129,6 +129,9 @@ section#challengeDetails {
 #currentStem {
   text-transform: uppercase;
 }
+#stemSelect, #stemSelect option {
+  text-transform: uppercase;
+}
 
 body {
   display: flex;
