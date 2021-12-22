@@ -3,45 +3,88 @@ html {
   font-size: 1.2em;
 }
 
+body {
+  display: flex;
+}
+
+.wrapper {
+  margin: auto;
+  display: flex;
+  flex-direction: column;
+  max-width: 480px;
+  width: min(480px, 90%);
+}
+
+h1 {
+  margin: 0.25em 0 .1em 0;
+}
+
 button {
   margin-left: auto;
 }
 
 
+section#challengeDetails {
+  margin-top: 2em;
+  display: flex;
+  flex-direction: column;
+}
+#currentLetter {
+  text-transform: uppercase;
+}
+p.gameStatus {
+  font-size: 1em;
+  padding: 0;
+  margin: 0;
+  margin-top: .4em;
+}
+#stemProgressWrapper {
+  display: flex;
+  flex-direction: horizontal;
+  margin-bottom: 0.5em;
+}
+#stemProgressWrapper p:last-child {
+  margin-left: auto;
+}
+#currentStem {
+  text-transform: uppercase;
+}
+#stemSelect, #stemSelect option {
+  text-transform: uppercase;
+}
+
+
+
 section#rack {
   display: flex;
   margin: 1em 0 .4em 0;
-  //margin: 1em auto;
   min-height: 50px;
 }
-
 section#rack kbd {
-  //position: absolute;
-  //margin-right: auto;
   margin: .15em .3em .15em 0;
   margin-left: 0;
 }
 section#rack kbd:last-child {
-  //position: absolute;
   margin-right: auto;
-  //margin: .15em;
 }
-
-.buttonWrapper {
-  display: flex;
-  flex-direction: row;
-}
-.buttonWrapper button {
-  margin-left: 1em;
-}
-.buttonWrapper button:first-child {
-  margin-left: auto;
+kbd.tile {
+  border-radius: 3px;
+  border: 2px solid black;
+  text-transform: capitalize;
+  
+  display: inline-block;
+  width: 2ch;
+  font-size: 2em;
+  height: 2ch;
+  text-align: center;
+} 
+kbd.played {
+  display: none;
 }
 
 
 
 form#field {
-  //margin: 1em auto 1em 0;
   margin: 1em auto .5em 0;
   display: flex;
   align-items: baseline;
@@ -57,35 +100,27 @@ form#field {
   text-transform: uppercase;
   margin-right: .15em;
 }
-
 #field button {
   //margin-left: min(5px, 2%);
   margin-left: auto;
 }
  
-kbd.tile {
-  border-radius: 3px;
-  border: 2px solid black;
-  text-transform: capitalize;
-  
-  display: inline-block;
-  width: 2ch;
-  font-size: 2em;
-  height: 2ch;
-  text-align: center;
-} 
 
-kbd.played {
-  display: none;
-  //visibility: hidden;
-}
-
-h1 {
-  margin: 0.25em 0 .1em 0;
-}
 .subtitle {
   text-align: right;
 }
+
+.buttonWrapper {
+  display: flex;
+  flex-direction: row;
+}
+.buttonWrapper button {
+  margin-left: 1em;
+}
+.buttonWrapper button:first-child {
+  margin-left: auto;
+}
+
 
 ul#foundWords li {
   text-transform: capitalize;
@@ -99,48 +134,3 @@ ul#foundWords li span{
 ul#foundWords {
 }
 
-#currentLetter {
-  text-transform: uppercase;
-}
-
-
-p.gameStatus {
-  font-size: 1em;
-  padding: 0;
-  margin: 0;
-  margin-top: .4em;
-}
-
-section#challengeDetails {
-  margin-top: 2em;
-  display: flex;
-  flex-direction: column;
-}
-
-#stemProgressWrapper {
-  display: flex;
-  flex-direction: horizontal;
-  margin-bottom: 0.5em;
-}
-#stemProgressWrapper p:last-child {
-  margin-left: auto;
-}
-
-#currentStem {
-  text-transform: uppercase;
-}
-#stemSelect, #stemSelect option {
-  text-transform: uppercase;
-}
-
-body {
-  display: flex;
-}
-.wrapper {
-  margin: auto;
-  display: flex;
-  flex-direction: column;
-  //padding: 0 1em;
-  max-width: 480px;
-  width: min(480px, 90%);
-}
