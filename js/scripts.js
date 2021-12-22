@@ -244,54 +244,51 @@ document.getElementById('clear').addEventListener('click', function() {
 });
 
 
-function switchStem() {
-  stemMang.setToSelection();
-  letterMang.reset();
-  resetForNewLetter();
-  resetForNewStem();
-  unShuffleRack();
-}
-
-
-
-// refs globals: bingoStems 
-function wordsBeingSearchedFor() {
-  return bingoStems[stemMang.value()][letterMang.value()];
-}
-
-
-resetForNewLetter();
-
 
 function initInputListeners() {
   const inputs = document.querySelectorAll('#field input');
+  const field = document.getElementById('field');
+
+  field.addEventListener('change', function(e) {
+    syncPlayedTiles();
+    if (getInputtedWord().length === inputs.length) {
+      checkWord();
+    }
+  });
+
   inputs.forEach(function(input, key) {
     // clicking input selects content so that typing a letter replaces it
     input.addEventListener('click', function() {
       input.select();
     });
-    // checks if inputted char is valid, if it is it progress to next input 
+
     input.addEventListener('input', function() {
-      if(isValidValue(input.value)) {
-        hideTile(input.value);
+      if(isPlayableValue(input.value)) {
+        markTileAsPlayed(input.value);
         if (key !== inputs.length - 1) {
           inputs[key + 1].focus();
           inputs[key + 1].select();
         } else {
-          checkWord();
+          field.dispatchEvent(new Event('change'));
         }
       } else {
         input.value = '';
       }
     });
+
     input.addEventListener('keydown', function (e) {
-      if (e.key === 'Backspace' && !input.value && key > 0) {
-          inputs[key - 1].focus();
+      if (e.key === 'Backspace'){
+        if (key > 0 && !input.value) {
+          inputs[key - 1].value = '';
           inputs[key - 1].select();
-          syncPlayedTiles();
+        }
+        inputs[key].value = '';
+        field.dispatchEvent(new Event('change'));
       }
-      if (key === inputs.length - 1 && e.key === 'Enter') {
-        clearField();
+      if (e.key === 'Enter') {
+        if (getInputtedWord().length === inputs.length) {
+          clearField();
+        }
       }
     });
   });
@@ -326,18 +323,49 @@ function clearField() {
 }
 
 
+function switchStem() {
+  stemMang.setToSelection();
+  letterMang.reset();
+  resetForNewLetter();
+  resetForNewStem();
+  unShuffleRack();
+}
+
+// refs globals: bingoStems 
+function wordsBeingSearchedFor() {
+  return bingoStems[stemMang.value()][letterMang.value()];
+}
+
+function resetForNewLetter() {
+  let currentLetter = letterMang.value();
+  document.getElementById('currentLetter').innerHTML = currentLetter;
+  document.getElementById('blank').innerHTML = currentLetter;
+
+  roundMang.resetFoundWords();
+  let wordsToFind = wordsBeingSearchedFor();
+  updateProgressTracker();
+  
+  clearField();
+  if (wordsToFind.length !== 0) {
+    document.getElementById('nextLetter').disabled = true;
+  } else {
+    markSuccess();
+  }
+}
+
+resetForNewLetter();
+
 function syncPlayedTiles() {
   resetPlayedTiles();
   let toRemove = Array.from(getInputtedWord());
-  toRemove.pop(); // pop because inputted word has an extra letter when syncPlayedTiles is triggered from backspace, so this causes other issues
-  toRemove.forEach(c => hideTile(c));
+  toRemove.forEach(c => markTileAsPlayed(c));
 }
 
 function resetPlayedTiles() {
   document.querySelectorAll('kbd.played').forEach(tile => tile.classList.remove('played'));
 }
 
-function hideTile(value) {
+function markTileAsPlayed(value) {
   let unplayedTiles = document.querySelectorAll('kbd:not(.played).tile');
   for (let i = 0; i < unplayedTiles.length; i++) {
     if (unplayedTiles[i].innerHTML === value.toLowerCase()) {
@@ -348,7 +376,7 @@ function hideTile(value) {
 }
 
 
-function isValidValue(value) {
+function isPlayableValue(value) {
   // inputtedWord will include incoming value
   // add it to validLetters to cancel it out
   let validLetters = 
@@ -359,8 +387,6 @@ function isValidValue(value) {
   });
   return validLetters.includes(value);
 }
-
-
 
 function shuffleRack() {
   let rack = document.querySelector('section#rack');
@@ -511,22 +537,6 @@ function resetForNewStem() {
 }
 
 
-function resetForNewLetter() {
-  let currentLetter = letterMang.value();
-  document.getElementById('currentLetter').innerHTML = currentLetter;
-  document.getElementById('blank').innerHTML = currentLetter;
-
-  roundMang.resetFoundWords();
-  let wordsToFind = wordsBeingSearchedFor();
-  updateProgressTracker();
-  
-  clearField();
-  if (wordsToFind.length !== 0) {
-    document.getElementById('nextLetter').disabled = true;
-  } else {
-    markSuccess();
-  }
-}
 
 
 
