@@ -103,19 +103,114 @@ const bingoStems = {
   }
 };
 
-const alphabet = 'abcdefghijklmnopqrstuvwxyz';
-
-function initLocalDictionary() {
+const dictionary = (function() {
   let definedWords = {};
-  if (window.localStorage.getItem('definedWords')) {
-    definedWords = JSON.parse(window.localStorage.getItem('definedWords'));
-  } else {
-    window.localStorage.setItem('definedWords', JSON.stringify(definedWords));
-  }
-  
-  return definedWords;
-};
+  function initDictionary() {
+    if (window.localStorage.getItem('definedWords')) {
+      definedWords = JSON.parse(window.localStorage.getItem('definedWords'));
+    } else {
+      saveDictionary();
+    }
+  };
+  initDictionary();
 
+  function saveDictionary() {
+    window.localStorage.setItem(
+      'definedWords', 
+      JSON.stringify(definedWords)
+    );
+  }
+  function hasDefinition(word) {
+    return Object.keys(definedWords).includes(word);
+  }
+  function getDefinition(word) {
+    return definedWords[word];
+  }
+  function addDefinition(word, definition) {
+    definedWords[word] = definition;
+    saveDictionary();
+  }
+
+  return {
+    hasDefinition: function(word) {
+      return hasDefinition(word);
+    },
+    getDefinition: function(word) {
+      return getDefinition(word);
+    },
+    addDefinition: function(word, definition) {
+      addDefinition(word, definition);
+    }
+  }
+})();
+
+const stemMang = (function(initialStem) {
+  let currentStem = initialStem;
+  function setCurrentStemToSelection() {
+    currentStem = document.getElementById('stemSelect').value;
+  }
+
+  return {
+    value: function() {
+      return currentStem;
+    },
+    setToSelection: function() {
+      setCurrentStemToSelection();
+    }
+  }
+})(Object.keys(bingoStems)[0]);
+
+const letterMang = (function() {
+  let currentLetter = 'a';
+  let alphabet = 'abcdefghijklmnopqrstuvwxyz';
+  
+  function reset() {
+    currentLetter = 'a';
+  }
+  function advance() {
+    currentLetter = alphabet[alphabet.indexOf(currentLetter) + 1];
+  }
+
+  return {
+    value: function() {
+      return currentLetter;
+    },
+    reset: function() {
+      reset();
+    },
+    advance: function() {
+      advance();
+    }
+  }
+})();
+
+const roundMang = (function() {
+  let wordsFound = [];
+  function reset() {
+    wordsFound = [];
+  }
+  function addWord(word) {
+    wordsFound.push(word);
+  }
+
+  return {
+    foundWords: function() {
+      return wordsFound;
+    },
+    resetFoundWords: function() {
+      reset();
+    },
+    addWord: function(word) {
+      addWord(word);
+    },
+    hasWordBeenFound: function(word) {
+      return wordsFound.includes(word);
+    }
+  }
+})();
+
+
+// refs globals: bingoStems
 function initStemSelect() {
   let stems = Object.keys(bingoStems);
   let select = document.getElementById('stemSelect');
@@ -132,67 +227,103 @@ initStemSelect();
 document.getElementById('stemSelect').addEventListener('change', function() {
   switchStem();
 });
+document.getElementById('shuffle').addEventListener('click', function() {
+  shuffleRack();
+});
+document.getElementById('unShuffle').addEventListener('click', function() {
+  unShuffleRack();
+});
+document.getElementById('yield').addEventListener('click', function() {
+  yield();
+});
+document.getElementById('nextLetter').addEventListener('click', function() {
+  goToNextLetter();
+});
+document.getElementById('clear').addEventListener('click', function() {
+  clearField();
+});
+
 
 function switchStem() {
-  currentLetter = 'a';
-  currentStem = document.getElementById('stemSelect').value;
-
+  stemMang.setToSelection();
+  letterMang.reset();
   resetForNewLetter();
   resetForNewStem();
-  //shuffle letters
   unShuffleRack();
-  console.log('starting over');
 }
 
 
-let definedWords = initLocalDictionary();
 
-let currentStem = Object.keys(bingoStems)[0];
-let currentLetter = Object.keys(bingoStems[currentStem])[0];
-let wordsFoundForCurrentLetter = [];
+// refs globals: bingoStems 
+function wordsBeingSearchedFor() {
+  return bingoStems[stemMang.value()][letterMang.value()];
+}
 
-const inputs = document.querySelectorAll('#field input');
-const field = document.getElementById('field');
 
 resetForNewLetter();
 
 
-
-
-
-
-inputs.forEach(function(input, key) {
-  // clicking input selects content so that typing a letter replaces it
-  input.addEventListener('click', function() {
-    input.select();
-  });
-  // checks if inputted char is valid, if it is it progress to next input 
-  input.addEventListener('input', function() {
-    if(isValidValue(input.value)) {
-      hideTile(input.value);
-      if (key !== inputs.length - 1) {
-        inputs[key + 1].focus();
-        inputs[key + 1].select();
+function initInputListeners() {
+  const inputs = document.querySelectorAll('#field input');
+  inputs.forEach(function(input, key) {
+    // clicking input selects content so that typing a letter replaces it
+    input.addEventListener('click', function() {
+      input.select();
+    });
+    // checks if inputted char is valid, if it is it progress to next input 
+    input.addEventListener('input', function() {
+      if(isValidValue(input.value)) {
+        hideTile(input.value);
+        if (key !== inputs.length - 1) {
+          inputs[key + 1].focus();
+          inputs[key + 1].select();
+        } else {
+          checkWord();
+        }
       } else {
-        checkWord();
+        input.value = '';
       }
-    } else {
-      input.value = '';
+    });
+    input.addEventListener('keydown', function (e) {
+      if (e.key === 'Backspace' && !input.value && key > 0) {
+          inputs[key - 1].focus();
+          inputs[key - 1].select();
+          syncPlayedTiles();
+      }
+      if (key === inputs.length - 1 && e.key === 'Enter') {
+        clearField();
+      }
+    });
+  });
+}
+
+initInputListeners();
+
+function getInputtedWord() {
+  let inputs = document.querySelectorAll('#field input');
+  let word = '';
+  for ( let i=0; i < inputs.length; i++) {
+    word += inputs[i].value;
+  }
+  return word.toLowerCase();
+}
+function areAllInputsNonEmpty() {
+  let inputs = document.querySelectorAll('#field input');
+  let allNonEmpty = true;
+  inputs.forEach(function(input) {
+    if (!input.value || input.value === ' ') {
+      allNonEmpty = false;
     }
   });
-  input.addEventListener('keydown', function (e) {
-    if (e.key === 'Backspace' && !input.value && key > 0) {
-        inputs[key - 1].focus();
-        inputs[key - 1].select();
-        syncPlayedTiles();
-    }
-    if (key === inputs.length - 1 && e.key === 'Enter') {
-      clearField();
-    }
-  });
-});
+  return allNonEmpty;
+}
+function clearField() {
+  let inputs = document.querySelectorAll('#field input');
+  inputs.forEach(input => input.value = '');
+  inputs[0].focus();
 
-
+  resetPlayedTiles();
+}
 
 
 function syncPlayedTiles() {
@@ -206,18 +337,6 @@ function resetPlayedTiles() {
   document.querySelectorAll('kbd.played').forEach(tile => tile.classList.remove('played'));
 }
 
-
-function isValidValue(value) {
-  // inputtedWord will include incoming value, so add it into valid 
-  // to cancel it out
-  let validLetters = Array.from(currentStem + currentLetter + value);
-  let inputtedWord = Array.from(getInputtedWord());
-  Array.from(inputtedWord).forEach(function(c) {
-    validLetters.splice(validLetters.indexOf(c), 1);
-  });
-  return validLetters.includes(value);
-}
-
 function hideTile(value) {
   let unplayedTiles = document.querySelectorAll('kbd:not(.played).tile');
   for (let i = 0; i < unplayedTiles.length; i++) {
@@ -227,6 +346,21 @@ function hideTile(value) {
     }
   }
 }
+
+
+function isValidValue(value) {
+  // inputtedWord will include incoming value
+  // add it to validLetters to cancel it out
+  let validLetters = 
+    Array.from(stemMang.value() + letterMang.value() + value);
+  let inputtedWord = Array.from(getInputtedWord());
+  Array.from(inputtedWord).forEach(function(c) {
+    validLetters.splice(validLetters.indexOf(c), 1);
+  });
+  return validLetters.includes(value);
+}
+
+
 
 function shuffleRack() {
   let rack = document.querySelector('section#rack');
@@ -244,46 +378,36 @@ function unShuffleRack() {
   let rackArray = Array.prototype.slice.call(rack.children);
   rackArray.sort(sortByDataOrder);
   for (let i=0; i < rackArray.length; i++) {
-    let parent = rackArray[i].parentNode;
-    let detatchedTile = parent.removeChild(rackArray[i]);
-    parent.appendChild(detatchedTile);
+    let detatchedTile = rack.removeChild(rackArray[i]);
+    rack.appendChild(detatchedTile);
   }
 }
 
-document.getElementById('shuffle').addEventListener('click', function() {
-  shuffleRack();
-});
-document.getElementById('unShuffle').addEventListener('click', function() {
-  unShuffleRack();
-});
 
-
-document.getElementById('yield').addEventListener('click', function() {
-  yield();
-});
 
 function showUnfoundWords() {
-  bingoStems[currentStem][currentLetter].forEach(word => {
-    if (!wordsFoundForCurrentLetter.includes(word)) {
-      if (definedWords[word]) {
-        addMissedWord(word);
+  wordsBeingSearchedFor().forEach(word => {
+    if (!roundMang.hasWordBeenFound(word)) {
+      if (dictionary.hasDefinition(word)) {
+        addMissedWordToDOM(word);
       } else {
         defineWord(word).then(definition => {
-          definedWords[word] = definition;
-          window.localStorage.setItem('definedWords', JSON.stringify(definedWords));
-          addMissedWord(word);
+          dictionary.addDefinition(word, definition);
+          addMissedWordToDOM(word);
         });
       }
-      wordsFoundForCurrentLetter.push(word);
-      updateCurrentLetterProgressTracking();
+      roundMang.addWord(word);
+      updateProgressTracker();
     }
   });
 
 }
 
-function updateCurrentLetterProgressTracking() {
+function updateProgressTracker() {
   document.getElementById('currentProgress').innerHTML = 
-    wordsFoundForCurrentLetter.length + ' of ' + bingoStems[currentStem][currentLetter].length;
+    roundMang.foundWords().length + 
+    ' of ' + 
+    wordsBeingSearchedFor().length;
 }
 
 function yield() {
@@ -294,40 +418,40 @@ function yield() {
 function checkWord() {
   if (areAllInputsNonEmpty()) {
     let inputtedWord = getInputtedWord();
-    let valid = bingoStems[currentStem][currentLetter].includes(inputtedWord);
-    if (valid && !wordsFoundForCurrentLetter.includes(inputtedWord)) {
-      updateFoundWords();
+    let valid = wordsBeingSearchedFor().includes(inputtedWord);
+    if (valid && !roundMang.hasWordBeenFound(inputtedWord)) {
+      newWordFound();
     }
   } 
 }
 
-function updateFoundWords() {
-  let newWord = getInputtedWord();
-  wordsFoundForCurrentLetter.push(newWord);
-  updateCurrentLetterProgressTracking();
+function newWordFound() {
+  let word = getInputtedWord();
+  roundMang.addWord(word);
+
+  updateProgressTracker();
 
   var audio = new Audio('sounds/zapsplat_pop.mp3');
   audio.play();
 
-  if (wordsFoundForCurrentLetter.length === bingoStems[currentStem][currentLetter].length) {
+  if (roundMang.foundWords().length === wordsBeingSearchedFor().length) {
     markSuccess();
   }
 
-  if (definedWords[newWord]) {
-    addWord(newWord);
+  if (dictionary.hasDefinition(word)) {
+    addFoundWordToDOM(word);
   } else {
-    defineWord(newWord).then(definition => {
-      definedWords[newWord] = definition;
-      window.localStorage.setItem('definedWords', JSON.stringify(definedWords));
-      addWord(newWord);
+    defineWord(word).then(definition => {
+      dictionary.addDefinition(word, definition);
+      addFoundWordToDOM(word);
     });
   }
-  console.log(newWord, definedWords);
 }
+
 
 function defineWord(word) {
   return new Promise((resolve, reject) => {
-    fetch('https://api.dictionaryapi.dev/api/v2/entries/en/'+word)
+    fetch('https://api.dictionaryapi.dev/api/v2/entries/en/' + word)
       .then(response => response.json())
       .then(function(data) {
         let definition = '';
@@ -343,21 +467,21 @@ function defineWord(word) {
   });
 }
 
-function addWord(wordToAdd) {
+function addFoundWordToDOM(wordToAdd) {
   let li = document.createElement('li');
   li.innerHTML = wordToAdd + ':';
   let definition = document.createElement('span');
-  definition.innerHTML = definedWords[wordToAdd];
+  definition.innerHTML = dictionary.getDefinition(wordToAdd);
   definition.classList.add('definition');
   li.appendChild(definition);
   document.getElementById('foundWords').prepend(li);
 }
 
-function addMissedWord(wordToAdd) {
+function addMissedWordToDOM(wordToAdd) {
   let li = document.createElement('li');
   li.innerHTML = wordToAdd + ' (missed):';
   let definition = document.createElement('span');
-  definition.innerHTML = definedWords[wordToAdd];
+  definition.innerHTML = dictionary.getDefinition(wordToAdd);
   definition.classList.add('definition');
   li.appendChild(definition);
   document.getElementById('foundWords').prepend(li);
@@ -374,12 +498,13 @@ function markSuccess() {
 
 function goToNextLetter() {
   unShuffleRack();
-  currentLetter = alphabet[alphabet.indexOf(currentLetter) + 1];
+  letterMang.advance();
   resetForNewLetter();
 }
 
 function resetForNewStem() {
   let rack = document.getElementById('rack');
+  let currentStem = stemMang.value();
   for (let i = 0; i < rack.children.length - 1; i++) {
     rack.children[i].innerHTML = currentStem[i];
   }
@@ -387,57 +512,22 @@ function resetForNewStem() {
 
 
 function resetForNewLetter() {
+  let currentLetter = letterMang.value();
   document.getElementById('currentLetter').innerHTML = currentLetter;
   document.getElementById('blank').innerHTML = currentLetter;
 
-  wordsFoundForCurrentLetter = [];
-  document.getElementById('currentProgress').innerHTML = 
-    wordsFoundForCurrentLetter.length + ' of ' + bingoStems[currentStem][currentLetter].length;
+  roundMang.resetFoundWords();
+  let wordsToFind = wordsBeingSearchedFor();
+  updateProgressTracker();
   
   clearField();
-  if (bingoStems[currentStem][currentLetter].length !== 0) {
+  if (wordsToFind.length !== 0) {
     document.getElementById('nextLetter').disabled = true;
   } else {
     markSuccess();
   }
 }
 
-
-document.getElementById('nextLetter').addEventListener('click', function() {
-  goToNextLetter();
-});
-
-
-
-function getInputtedWord() {
-  let word = '';
-  for ( let i=0; i < inputs.length; i++) {
-    word += inputs[i].value;
-  }
-  return word.toLowerCase();
-}
-
-function areAllInputsNonEmpty() {
-  let allNonEmpty = true;
-  inputs.forEach(function(input) {
-    if (!input.value || input.value === ' ') {
-      allNonEmpty = false;
-    }
-  });
-  return allNonEmpty;
-}
-
-
-document.getElementById('clear').addEventListener('click', function() {
-  clearField();
-});
-
-function clearField() {
-  inputs.forEach(input => input.value = '');
-  inputs[0].focus();
-
-  resetPlayedTiles();
-}
 
 
 /*
