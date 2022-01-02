@@ -1,0 +1,13 @@
+{
+  "files": {
+    "main.css": "/WordGameTrainer/static/css/main.98a220c2.css",
+    "main.js": "/WordGameTrainer/static/js/main.9e8f5f2f.js",
+    "index.html": "/WordGameTrainer/index.html",
+    "main.98a220c2.css.map": "/WordGameTrainer/static/css/main.98a220c2.css.map",
+    "main.9e8f5f2f.js.map": "/WordGameTrainer/static/js/main.9e8f5f2f.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.98a220c2.css",
+    "static/js/main.9e8f5f2f.js"
+  ]
+}
