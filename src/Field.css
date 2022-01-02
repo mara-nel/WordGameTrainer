@@ -1,0 +1,21 @@
+form#field {
+  margin: 1em auto .5em 0;
+  display: flex;
+  align-items: baseline;
+  width: 100%;
+}
+#field input {
+  width: 1.5ch;
+  font-size: 2em;
+  height: 1.5ch;
+  text-align: center;
+  border: none;
+  border-bottom: 2px solid black;
+  text-transform: uppercase;
+  margin-right: .15em;
+}
+#field button {
+  //margin-left: min(5px, 2%);
+  margin-left: auto;
+}
+ 
