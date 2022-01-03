@@ -1,13 +1,13 @@
 {
   "files": {
     "main.css": "/WordGameTrainer/static/css/main.a0c28547.css",
-    "main.js": "/WordGameTrainer/static/js/main.d53ff75c.js",
+    "main.js": "/WordGameTrainer/static/js/main.b9524460.js",
     "index.html": "/WordGameTrainer/index.html",
     "main.a0c28547.css.map": "/WordGameTrainer/static/css/main.a0c28547.css.map",
-    "main.d53ff75c.js.map": "/WordGameTrainer/static/js/main.d53ff75c.js.map"
+    "main.b9524460.js.map": "/WordGameTrainer/static/js/main.b9524460.js.map"
   },
   "entrypoints": [
     "static/css/main.a0c28547.css",
-    "static/js/main.d53ff75c.js"
+    "static/js/main.b9524460.js"
   ]
 }
