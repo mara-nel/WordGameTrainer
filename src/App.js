@@ -2,6 +2,7 @@ import './App.css';
 import Home from './Home';
 import PowerStems from './PowerStems';
 import Credits from './Credits';
+import Twos from './Twos';
 
 import { Route, Routes, Link } from 'react-router-dom';
 
@@ -14,6 +15,7 @@ function App() {
         <Routes>
           <Route path="/credits" element={<Credits />}/>
           <Route path="/power-stems" element={<PowerStems />}/>
+          <Route path="/twos" element={<Twos />}/>
           <Route path="/" element={<Home />}/>
         </Routes>
       </div>
