@@ -29,10 +29,13 @@ const Board = ({tiles, enteredValues, setEnteredValues, checkWord}) => {
 
   const syncPlayedTiles = () => {
     let remaining = Array.from(tiles);
-    enteredValues.forEach(function(c) {
+    let enteredLetters = enteredValues.filter(l => l !== '');
+    enteredLetters.forEach(function(c) {
       let i = remaining.indexOf(c);
       if (i > -1) {
         remaining.splice(i, 1);
+      } else if (remaining.includes('*')) {
+        remaining.splice(remaining.indexOf('*'), 1);
       }
     });
     setUnplayedTiles(remaining);
@@ -44,7 +47,7 @@ const Board = ({tiles, enteredValues, setEnteredValues, checkWord}) => {
       <Rack 
         tiles={unplayedTiles}/>
       <Field 
-        length={7} 
+        length={tiles.length} 
         enteredValues={enteredValues}
         setEnteredValues={setEnteredValues}
         restricted={true}

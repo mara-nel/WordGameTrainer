@@ -1,5 +1,9 @@
 import "./Field.css";
 
+function isLetter(str) {
+  return str.length === 1 && str.match(/[a-z]/i);
+}
+
 const Field = ({length, restricted, restrictedOptions, enteredValues, setEnteredValues}) => {
 
   const inputs = document.querySelectorAll('#field input');
@@ -13,11 +17,28 @@ const Field = ({length, restricted, restrictedOptions, enteredValues, setEntered
   const handleInput = (event) => {
     let key = parseInt(event.target.getAttribute("data-order"));
     let value = event.target.value.toLowerCase();
-
+  
+    /*
     if (restricted && restrictedOptions.includes(value)) {
       updateEnteredValues(key, value);
-    } else if (!restricted) {
+    } else if (!restricted && isLetter(value)) {
       updateEnteredValues(key, value);
+    }*/
+    if (validValue(value)) {
+      updateEnteredValues(key, value);
+    }
+  }
+
+  const validValue = (value) => {
+  
+    if (restricted) {
+      if (!restrictedOptions.includes('*')) {
+        return restrictedOptions.includes(value);
+      } else {
+        return true;
+      }
+    } else {
+      return isLetter(value);
     }
   }
 
