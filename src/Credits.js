@@ -1,0 +1,19 @@
+const Credits = () => {
+  return (
+    <div>
+    <h2>Credits</h2>
+    <p>This application is a study tool for learning the 'Cheat Sheet', which was compiled by Mike Baron and John Attamack. The 'Cheat Sheet' can be freely downloaded at <a href="https://www.cross-tables.com/cs">cross-tables.com/cs</a>.
+    </p>
+
+    <p>
+      All sounds included within this application are from <a href="https://zapsplat.com">Zapsplat.com</a>.
+    </p>
+
+    <p>
+      This application has been designed and developed by <a href="https://wynnelson.com">Wyn Nelson</a>.
+    </p>
+    </div>
+
+  )
+}
+export default Credits;
