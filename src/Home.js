@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import Board from "./Board";
+import FoundWordsList from "./FoundWordsList";
 import bingoStems from "./bingoStems";
 import "./Home.css";
 
@@ -80,8 +81,8 @@ const Home = () => {
   }
 
   const clearField = () => {
+    setEnteredValues(Array(7).fill(''));
     let inputs = document.querySelectorAll('#field input');
-    inputs.forEach(input => input.value = '');
     inputs[0].focus();
   }
 
@@ -91,9 +92,15 @@ const Home = () => {
   }
 
   const showUnfoundWords = () => {
+    //let promises = [];
     let unfoundWords = wordsBeingSearchedFor().filter(
       word => !roundsFoundWords.includes(word)
     );
+    let undefinedWords = unfoundWords.filter(
+      word => !dictionary[word]
+    );
+    handleUndefinedWords(undefinedWords);
+
     let preppedUnfoundWords = unfoundWords.map((word, i) => {
       return {
         'word': word,
@@ -113,6 +120,17 @@ const Home = () => {
     ]);
   }
 
+  const handleUndefinedWords = (words) => {
+    let promises = words.map(word => defineWord(word));
+    Promise.all(promises).then((definitions) => {
+      let newDefinitions = Object.assign({}, ...definitions);
+      setDictionary({
+        ...dictionary,
+        ...newDefinitions
+      });
+    });
+  }
+  
   const checkWord = (word) => {
     let valid = wordsBeingSearchedFor().includes(word);
     if (valid && !roundsFoundWords.includes(word)) {
@@ -126,12 +144,7 @@ const Home = () => {
     audio.play();
 
     if (!dictionary[word]) {
-      defineWord(word).then(definition => {
-        setDictionary({
-          ...dictionary,
-          [word]: definition
-        });
-      });
+      handleUndefinedWords([word]);
     }
     setFoundWords([
       ...foundWords, 
@@ -158,7 +171,7 @@ const Home = () => {
             //assume no definition found
             definition = 'definition unavailable';
           }
-          resolve(definition);
+          resolve({[word]: definition});
         });
     });
   }
@@ -217,18 +230,11 @@ const Home = () => {
         checkWord={checkWord} 
         enteredValues={enteredValues} 
         setEnteredValues={setEnteredValues}/>
-      <ul id="foundWords">
-        {foundWords.slice(0).reverse().map((word) => (
-          <li key={word.id}>
-            {word.word}{word.found ? '' : ' (missed)'}: 
-            <span className="definition">
-              {dictionary[word.word]}
-            </span>
-          </li>
-        ))}
-      </ul>
+      <FoundWordsList 
+        words={foundWords}
+        dictionary={dictionary} />
       <p>
-      Sounds by <a href="https://zapsplat.com">Zapsplat.com</a>
+        Sounds by <a href="https://zapsplat.com">Zapsplat.com</a>
       </p>
     </div>
   );
