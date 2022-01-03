@@ -8,11 +8,18 @@ const Board = ({tiles, enteredValues, setEnteredValues, checkWord}) => {
   useEffect(() => {
     syncPlayedTiles();
   }, [tiles]);
+
   useEffect(() => {
     if (unplayedTiles.length === 0) {
       checkWord(getWordFromEnteredValues());
     }
   }, [unplayedTiles]);
+
+  
+  useEffect(() => {
+    syncPlayedTiles();
+  }, [enteredValues]);
+
 
   const getWordFromEnteredValues = () => {
     let word = '';
@@ -38,11 +45,10 @@ const Board = ({tiles, enteredValues, setEnteredValues, checkWord}) => {
         tiles={unplayedTiles}/>
       <Field 
         length={7} 
-        tiles={tiles} 
         enteredValues={enteredValues}
         setEnteredValues={setEnteredValues}
-        unplayedTiles={unplayedTiles}
-        handleSync={syncPlayedTiles}/>
+        restricted={true}
+        restrictedOptions={unplayedTiles} />
     </div>
   );
 

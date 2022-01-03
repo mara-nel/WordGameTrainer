@@ -1,14 +1,6 @@
-import { useEffect } from "react";
 import "./Field.css";
 
-const Field = ({length, tiles, unplayedTiles, enteredValues, setEnteredValues, handleSync}) => {
-
-  useEffect(() => {
-    handleClear();
-  }, [tiles]);
-  useEffect(() => {
-    handleSync();
-  }, [enteredValues]);
+const Field = ({length, restricted, restrictedOptions, enteredValues, setEnteredValues}) => {
 
   const inputs = document.querySelectorAll('#field input');
 
@@ -20,21 +12,31 @@ const Field = ({length, tiles, unplayedTiles, enteredValues, setEnteredValues, h
 
   const handleInput = (event) => {
     let key = parseInt(event.target.getAttribute("data-order"));
-    let values = enteredValues;
-    if (unplayedTiles.includes(event.target.value.toLowerCase())) {
-      values[event.target.getAttribute("data-order")] = 
-        event.target.value.toLowerCase();
-      if (key !== length - 1) {
-        inputs[key + 1].focus();
-        inputs[key + 1].select();
-      }
-    } 
-    setEnteredValues(values);
+    let value = event.target.value.toLowerCase();
+
+    if (restricted && restrictedOptions.includes(value)) {
+      updateEnteredValues(key, value);
+    } else if (!restricted) {
+      updateEnteredValues(key, value);
+    }
   }
+
+  const updateEnteredValues = (index, value) => {
+    let values = [...enteredValues];
+    values[index] = value;
+
+    setEnteredValues(values);
+
+    if (index !== length - 1) {
+      inputs[index + 1].focus();
+      inputs[index + 1].select();
+    }
+  }
+
   const handleKeyDown = (e) => {
     let key = parseInt(e.target.getAttribute("data-order"));
     if (e.key === 'Backspace') {
-      let values = enteredValues;
+      let values = [...enteredValues];
       if (key > 0 && !e.target.value) {
         values[key - 1] = '';
         inputs[key - 1].select();
@@ -70,13 +72,9 @@ const Field = ({length, tiles, unplayedTiles, enteredValues, setEnteredValues, h
     );
   }
 
-  const handleChange = () => {
-    handleSync();
-  }
-
   return (
     <div>
-      <form id="field" onChange={handleChange}>
+      <form id="field">
         {rows}
         <button 
           type="button" 
