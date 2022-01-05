@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import Rack from "./Rack";
 import Field from "./Field";
 
-const Board = ({tiles, enteredValues, setEnteredValues, checkWord}) => {
+const Board = ({tiles, enteredValues, setEnteredValues, checkWord }) => {
   const [unplayedTiles, setUnplayedTiles] = useState(tiles);
 
   useEffect(() => {
@@ -41,13 +41,11 @@ const Board = ({tiles, enteredValues, setEnteredValues, checkWord}) => {
     setUnplayedTiles(remaining);
   }
 
-
   return (
     <div>
       <Rack 
         tiles={unplayedTiles}/>
       <Field 
-        length={tiles.length} 
         enteredValues={enteredValues}
         setEnteredValues={setEnteredValues}
         restricted={true}

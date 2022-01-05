@@ -4,7 +4,7 @@ const FoundWordsList = ({words, dictionary}) => {
   
   return (
     <ul id="foundWords">
-      {words.slice(0).reverse().map((word) => (
+      {words.map((word) => (
         <li key={word.id}>
           {word.word}{word.found ? '' : ' (missed)'}: 
           <span className="definition">

@@ -1,41 +1,41 @@
+import { useRef, useEffect } from "react";
 import "./Field.css";
 
 function isLetter(str) {
   return str.length === 1 && str.match(/[a-z]/i);
 }
 
-const Field = ({length, restricted, restrictedOptions, enteredValues, setEnteredValues}) => {
+const Field = ({restricted, restrictedOptions, enteredValues, setEnteredValues}) => {
 
-  const inputs = document.querySelectorAll('#field input');
+  const inputRefs = useRef(Array(enteredValues.length));
 
   const handleClear = () => {
-    let inputs = document.querySelectorAll('#field input');
-    setEnteredValues(Array(length).fill(''));
-    inputs[0].focus();
+    setEnteredValues(Array(enteredValues.length).fill(''));
   }
+
+  useEffect(() => {
+    let isEmpty = true;
+    enteredValues.forEach(l => {if (l!=='') { isEmpty = false }} );
+    if (isEmpty) {
+      inputRefs.current[0]?.focus();
+    }
+  }, [enteredValues]);
 
   const handleInput = (event) => {
     let key = parseInt(event.target.getAttribute("data-order"));
     let value = event.target.value.toLowerCase();
   
-    /*
-    if (restricted && restrictedOptions.includes(value)) {
-      updateEnteredValues(key, value);
-    } else if (!restricted && isLetter(value)) {
-      updateEnteredValues(key, value);
-    }*/
     if (validValue(value)) {
       updateEnteredValues(key, value);
     }
   }
 
   const validValue = (value) => {
-  
     if (restricted) {
       if (!restrictedOptions.includes('*')) {
         return restrictedOptions.includes(value);
       } else {
-        return true;
+        return isLetter(value);
       }
     } else {
       return isLetter(value);
@@ -48,38 +48,40 @@ const Field = ({length, restricted, restrictedOptions, enteredValues, setEntered
 
     setEnteredValues(values);
 
-    if (index !== length - 1) {
-      inputs[index + 1].focus();
-      inputs[index + 1].select();
+    if (index !== enteredValues.length - 1) {
+      inputRefs.current[index + 1]?.focus();
+      inputRefs.current[index + 1]?.select();
     }
   }
 
   const handleKeyDown = (e) => {
-    let key = parseInt(e.target.getAttribute("data-order"));
+    let index = parseInt(e.target.getAttribute("data-order"));
     if (e.key === 'Backspace') {
       let values = [...enteredValues];
-      if (key > 0 && !e.target.value) {
-        values[key - 1] = '';
-        inputs[key - 1].select();
+      if (index > 0 && !e.target.value) {
+        values[index - 1] = '';
+        inputRefs.current[index - 1]?.select();
       }
-      values[key] = '';
+      values[index] = '';
       setEnteredValues(values);
     }
     else if (e.key === 'Enter') {
       if (!enteredValues.includes('')) {
         handleClear();
       }
-    }
+    } 
   }
+
   const selectInput = (e) => {
     e.target.select();
   }
 
 
   let rows = [];
-  for (let i=0; i < length; i++) {
+  for (let i=0; i < enteredValues.length; i++) {
     rows.push(
       <input 
+        ref={el => inputRefs.current[i] = el}
         type="text" 
         key={i}
         maxLength="1" 
