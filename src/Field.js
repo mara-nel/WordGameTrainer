@@ -1,62 +1,87 @@
-import { useEffect } from "react";
+import { useRef, useEffect } from "react";
 import "./Field.css";
 
-const Field = ({length, tiles, unplayedTiles, enteredValues, setEnteredValues, handleSync}) => {
+function isLetter(str) {
+  return str.length === 1 && str.match(/[a-z]/i);
+}
 
-  useEffect(() => {
-    handleClear();
-  }, [tiles]);
-  useEffect(() => {
-    handleSync();
-  }, [enteredValues]);
+const Field = ({restricted, restrictedOptions, enteredValues, setEnteredValues}) => {
 
-  const inputs = document.querySelectorAll('#field input');
+  const inputRefs = useRef(Array(enteredValues.length));
 
   const handleClear = () => {
-    let inputs = document.querySelectorAll('#field input');
-    setEnteredValues(Array(length).fill(''));
-    inputs[0].focus();
+    setEnteredValues(Array(enteredValues.length).fill(''));
   }
+
+  useEffect(() => {
+    let isEmpty = true;
+    enteredValues.forEach(l => {if (l!=='') { isEmpty = false }} );
+    if (isEmpty) {
+      inputRefs.current[0]?.focus();
+    }
+  }, [enteredValues]);
 
   const handleInput = (event) => {
     let key = parseInt(event.target.getAttribute("data-order"));
-    let values = enteredValues;
-    if (unplayedTiles.includes(event.target.value.toLowerCase())) {
-      values[event.target.getAttribute("data-order")] = 
-        event.target.value.toLowerCase();
-      if (key !== length - 1) {
-        inputs[key + 1].focus();
-        inputs[key + 1].select();
-      }
-    } 
-    setEnteredValues(values);
+    let value = event.target.value.toLowerCase();
+  
+    if (validValue(value)) {
+      updateEnteredValues(key, value);
+    }
   }
-  const handleKeyDown = (e) => {
-    let key = parseInt(e.target.getAttribute("data-order"));
-    if (e.key === 'Backspace') {
-      let values = enteredValues;
-      if (key > 0 && !e.target.value) {
-        values[key - 1] = '';
-        inputs[key - 1].select();
+
+  const validValue = (value) => {
+    if (restricted) {
+      if (!restrictedOptions.includes('*')) {
+        return restrictedOptions.includes(value);
+      } else {
+        return isLetter(value);
       }
-      values[key] = '';
+    } else {
+      return isLetter(value);
+    }
+  }
+
+  const updateEnteredValues = (index, value) => {
+    let values = [...enteredValues];
+    values[index] = value;
+
+    setEnteredValues(values);
+
+    if (index !== enteredValues.length - 1) {
+      inputRefs.current[index + 1]?.focus();
+      inputRefs.current[index + 1]?.select();
+    }
+  }
+
+  const handleKeyDown = (e) => {
+    let index = parseInt(e.target.getAttribute("data-order"));
+    if (e.key === 'Backspace') {
+      let values = [...enteredValues];
+      if (index > 0 && !e.target.value) {
+        values[index - 1] = '';
+        inputRefs.current[index - 1]?.select();
+      }
+      values[index] = '';
       setEnteredValues(values);
     }
     else if (e.key === 'Enter') {
       if (!enteredValues.includes('')) {
         handleClear();
       }
-    }
+    } 
   }
+
   const selectInput = (e) => {
     e.target.select();
   }
 
 
   let rows = [];
-  for (let i=0; i < length; i++) {
+  for (let i=0; i < enteredValues.length; i++) {
     rows.push(
       <input 
+        ref={el => inputRefs.current[i] = el}
         type="text" 
         key={i}
         maxLength="1" 
@@ -70,13 +95,9 @@ const Field = ({length, tiles, unplayedTiles, enteredValues, setEnteredValues, h
     );
   }
 
-  const handleChange = () => {
-    handleSync();
-  }
-
   return (
     <div>
-      <form id="field" onChange={handleChange}>
+      <form id="field">
         {rows}
         <button 
           type="button" 
