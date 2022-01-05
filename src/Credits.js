@@ -8,9 +8,6 @@ const Credits = () => {
     <p>
       All sounds included within this application are from <a href="https://zapsplat.com">Zapsplat.com</a>.
     </p>
-    <p>
-      This application has been designed and developed by <a href="https://wynnelson.com">Wyn Nelson</a>.
-    </p>
 
     <p>
       Definitions are provided from the <a href="https://dictionaryapi.dev/">Free Dictionary Api</a>.
