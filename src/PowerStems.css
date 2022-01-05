@@ -13,14 +13,13 @@ button {
   margin-left: auto;
 }
 
+select {
+  margin-left: 0.25em;
+}
 
 section#challengeDetails {
-  margin-top: 2em;
   display: flex;
   flex-direction: column;
-}
-#currentLetter {
-  text-transform: uppercase;
 }
 p.gameStatus {
   font-size: 1em;
@@ -47,6 +46,7 @@ p.gameStatus {
 
 .subtitle {
   text-align: right;
+  margin-bottom: 2em;
 }
 
 .buttonWrapper {
