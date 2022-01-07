@@ -5,7 +5,7 @@ const TwoHooks = () => {
 
   return (
     <div>
-      <div className="subtitle">practice your two letter hooks</div>
+      <div className="subtitle">practice your hooks for two letter words</div>
       <RoundManager
         masterWords={twoLetterHooks}
         rounds={Object.keys(twoLetterHooks)}

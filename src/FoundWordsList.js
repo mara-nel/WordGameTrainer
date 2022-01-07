@@ -1,9 +1,7 @@
-import { useState, useEffect } from "react";
-
 const FoundWordsList = ({words, dictionary}) => {
   
   return (
-    <ul id="foundWords">
+    <ul className={"elevated"} id="foundWords">
       {words.map((word) => (
         <li key={word.id}>
           {word.word}{word.found ? '' : ' (missed)'}: 

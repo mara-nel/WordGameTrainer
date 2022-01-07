@@ -5,6 +5,7 @@
   flex-direction: column;
   max-width: 480px;
   width: min(480px, 90%);
+  color: #eee;
 }
 
 .App-logo {
@@ -33,19 +34,151 @@
   color: #61dafb;
 }
 
+h1 {
+  font-size: 1.8rem;
+  margin: 0.25em 0 .1em 0;
+}
+h2 {
+  margin-top: 0;
+}
 h1 a {
   text-decoration: none;
-  color: black;
+  //color: bisque;
+  color: white;
 }
-h1 a:hover {
+h1 > a > span {
+  white-space: nowrap;
+  display: inline-block;
+  margin-right: .3rem;
+}
+h1 a:hover, a:active { 
   text-decoration: underline;
+  text-decoration-color: #a00;
+  border-bottom: 3px solid #a00;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+
+.subtitle {
+  text-align: right;
+  margin-bottom: 2rem;
+}
+
+kbd.tile {
+  text-transform: capitalize;
+  display: inline-block;
+}
+
+.tile {
+  font-size: 1.9rem;
+  box-shadow: 0px -4px 0px 0px burlywood;
+  background: bisque;
+  border-radius: 3px;
+  color: #000;
+  text-align: center;
+  min-width: 2.2rem;
+  height: 2.1rem;
+}
+
+span.tile {
+  display: inline-block;
+  margin-top: 4px;
+}
+
+
+ul#foundWords li {
+  text-transform: capitalize;
+  font-weight: bold;
+}
+ul#foundWords li span{
+  text-transform: none;
+  color: #bbb;
+  font-size: .85rem;
+  margin-left: .6rem;
+  font-weight: normal;
+}
+ul#foundWords {
+  min-height: 20vh;
+  list-style-type: none;
+}
+
+.elevated {
+  background-color: #202123;
+  border-radius: 6px;
+  padding: 0.6rem;
+  margin-top: 1rem;
+}
+
+
+.wrapper {
+  margin: auto;
+  display: flex;
+  flex-direction: column;
+  max-width: 480px;
+  width: min(480px, 90%);
+}
+
+input {
+  box-sizing: border-box;
+}
+
+select {
+  margin-left: 0.25rem;
+  border: 0;
+  border-radius: 3px;
+  padding: 2px 0;
+  background: #eee;
+}
+
+
+button {
+  border: 0;
+  border-radius: 3px;
+  padding: 2px .5rem;
+  background: #eee;
+}
+button:hover:enabled {
+  background: #bbb;
+}
+button:active:enabled {
+  transform: translateY(1px);
+}
+button:disabled {
+  background: #222;
+  color: #999;
+}
+
+
+
+div.buttonWrapper {
+  display: flex;
+  flex-direction: row;
+}
+div.buttonWrapper button {
+  margin-left: 1rem;
+}
+div.buttonWrapper button:first-child {
+  margin-left: auto;
+}
+
+#roundProgressWrapper {
+  display: flex;
+  flex-direction: horizontal;
+  margin-bottom: 0.5rem;
+  margin-top: 0.5rem;
+}
+#roundProgressWrapper p {
+  padding: 0;
+  margin: 0;
+}
+#roundProgressWrapper p:last-child {
+  margin-left: auto;
+}
+
+a {
+  color: #f88;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
 }
