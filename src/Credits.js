@@ -1,6 +1,6 @@
 const Credits = () => {
   return (
-    <div>
+    <div className={"elevated"}>
     <h2>Credits</h2>
     <p>This application is a study tool for learning the 'Cheat Sheet', which was compiled by Mike Baron and John Attamack. The 'Cheat Sheet' can be freely downloaded at <a href="https://www.cross-tables.com/cs">cross-tables.com/cs</a>.
     </p>

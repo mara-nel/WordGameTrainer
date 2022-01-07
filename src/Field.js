@@ -5,13 +5,9 @@ function isLetter(str) {
   return str.length === 1 && str.match(/[a-z]/i);
 }
 
-const Field = ({restricted, restrictedOptions, enteredValues, setEnteredValues}) => {
+const Field = ({restricted, restrictedOptions, enteredValues, setEnteredValues, handleClear, handleReset}) => {
 
   const inputRefs = useRef(Array(enteredValues.length));
-
-  const handleClear = () => {
-    setEnteredValues(Array(enteredValues.length).fill(''));
-  }
 
   useEffect(() => {
     let isEmpty = true;
@@ -64,12 +60,11 @@ const Field = ({restricted, restrictedOptions, enteredValues, setEnteredValues})
       }
       values[index] = '';
       setEnteredValues(values);
-    }
-    else if (e.key === 'Enter') {
+    } else if (e.key === 'Enter') {
       if (!enteredValues.includes('')) {
-        handleClear();
+        handleReset();
       }
-    } 
+    }
   }
 
   const selectInput = (e) => {
@@ -82,6 +77,7 @@ const Field = ({restricted, restrictedOptions, enteredValues, setEnteredValues})
     rows.push(
       <input 
         ref={el => inputRefs.current[i] = el}
+        className={enteredValues[i] !== '' ? 'tile' : 'empty'}
         type="text" 
         key={i}
         maxLength="1" 
@@ -97,14 +93,14 @@ const Field = ({restricted, restrictedOptions, enteredValues, setEnteredValues})
 
   return (
     <div>
-      <form id="field">
+      <form className={"elevated"} id="field">
         {rows}
+      </form>
+      <div className="buttonWrapper">
         <button 
           type="button" 
-          id="clear" 
-          onClick={handleClear}>Clear
-        </button>
-      </form>
+          onClick={handleClear}>Clear</button>
+      </div>
     </div>
   );
 }

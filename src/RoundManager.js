@@ -1,7 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import Board from "./Board";
 import FoundWordsList from "./FoundWordsList";
-import "./PowerStems.css";
 import Pop from "./sounds/zapsplat_pop.mp3";
 import Bell from "./sounds/zapsplat_bell.mp3";
 
@@ -185,9 +184,9 @@ const RoundManager = ({masterWords, rounds, roundsSelectable, tiles, tilesFirst,
 
   return (
     <div>
-      <section id="challengeDetails">
-        <div id="stemProgressWrapper">
-          <p className="gameStatus">
+      <section>
+        <div id="roundProgressWrapper">
+          <p>
             {roundMessage}
             { roundsSelectable === true
               ? <select
@@ -200,7 +199,7 @@ const RoundManager = ({masterWords, rounds, roundsSelectable, tiles, tilesFirst,
             }
           </p>
 
-          <p className="gameStatus">Progress: {roundsFoundWords.length} of {masterWords[roundTiles]?.length}</p>
+          <p>Progress: {roundsFoundWords.length} of {masterWords[roundTiles]?.length}</p>
         </div>
         <div className="buttonWrapper">
           <button 

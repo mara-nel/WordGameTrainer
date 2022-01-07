@@ -1,7 +1,6 @@
 import { useState } from "react";
 import shortJQXZs from "./wordLists/shortJQXZs";
 import RoundManager from "./RoundManager";
-import "./PowerStems.css";
 
 const makeAlphagram = function(word) {
     return word.split('').sort().join('');

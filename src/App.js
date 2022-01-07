@@ -13,7 +13,11 @@ import { Route, Routes, Link } from 'react-router-dom';
 function App() {
   return (
     <div className="App">
-      <h1><Link to="/">Word Game Trainer</Link></h1>
+      <h1><Link to="/">
+        <span><span className="tile">W</span>ord </span>
+        <span><span className="tile">G</span>ame </span>
+        <span><span className="tile">T</span>rainer </span>
+      </Link></h1>
       <div className="content">
         <Routes>
           <Route path="/credits" element={<Credits />}/>

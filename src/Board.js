@@ -3,10 +3,10 @@ import Rack from "./Rack";
 import Field from "./Field";
 
 const Board = ({tiles, enteredValues, setEnteredValues, checkWord }) => {
-  const [unplayedTiles, setUnplayedTiles] = useState(tiles);
+  const [unplayedTiles, setUnplayedTiles] = useState(Array.from(tiles));
 
   useEffect(() => {
-    syncPlayedTiles();
+    resetBoard();
   }, [tiles]);
 
   useEffect(() => {
@@ -17,7 +17,7 @@ const Board = ({tiles, enteredValues, setEnteredValues, checkWord }) => {
 
   
   useEffect(() => {
-    syncPlayedTiles();
+    syncTiles();
   }, [enteredValues]);
 
 
@@ -27,7 +27,7 @@ const Board = ({tiles, enteredValues, setEnteredValues, checkWord }) => {
     return word;
   }
 
-  const syncPlayedTiles = () => {
+  const unshuffleUnplayedTiles = () => {
     let remaining = Array.from(tiles);
     let enteredLetters = enteredValues.filter(l => l !== '');
     enteredLetters.forEach(function(c) {
@@ -41,13 +41,74 @@ const Board = ({tiles, enteredValues, setEnteredValues, checkWord }) => {
     setUnplayedTiles(remaining);
   }
 
+  const resetBoard = () => {
+    setUnplayedTiles(Array.from(tiles));
+    setEnteredValues(Array(enteredValues.length).fill(''));
+  }
+
+  const clearField = () => {
+    let enteredLetters = enteredValues.filter(l => l !== '');
+    setUnplayedTiles([...unplayedTiles, ...enteredLetters]);
+    setEnteredValues(Array(enteredValues.length).fill(''));
+  }
+
+  const syncTiles = () => {
+    const tileCounts = {};
+    Array.from(tiles).forEach(l => tileCounts[l] 
+      ? tileCounts[l]++ 
+      : tileCounts[l] = 1);
+    let enteredLetters = enteredValues.filter(l => l !== '');
+    enteredLetters.forEach(l =>  tileCounts[l] 
+      ? tileCounts[l]--
+      : tileCounts['*']--); //assumes input restriction working
+    let orderedNew = [];
+    let orderedOld = unplayedTiles;
+    for (let i=orderedOld.length-1; i>=0; i--) {
+      let l = orderedOld[i];
+      if (tileCounts[l] > 0) {
+        orderedNew.push(l);
+        tileCounts[l]--;
+      }
+    }
+    orderedNew.reverse();
+    Object.keys(tileCounts).forEach((l) => {
+      if (tileCounts[l] > 0) {
+        orderedNew.push(...Array(tileCounts[l]).fill(l));
+      }
+    });
+    setUnplayedTiles(orderedNew);
+  }
+
+  const shuffleUnplayedTiles = () => {
+    let array = [...unplayedTiles];
+    for (var i = array.length - 1; i > 0; i--) {
+        var j = Math.floor(Math.random() * (i + 1));
+        var temp = array[i];
+        array[i] = array[j];
+        array[j] = temp;
+    }
+    setUnplayedTiles(array);
+  }
+
+  const handleKeyDown = (e) => {
+    if (e.key === ' ' || e.key === 'Space') {
+      shuffleUnplayedTiles();
+    } else if (e.key === 'Shift') {
+      unshuffleUnplayedTiles();
+    }
+  }
+
   return (
-    <div>
+    <div onKeyDown={handleKeyDown}>
       <Rack 
-        tiles={unplayedTiles}/>
+        tiles={unplayedTiles}
+        shuffle={shuffleUnplayedTiles}
+        unshuffle={unshuffleUnplayedTiles}/>
       <Field 
         enteredValues={enteredValues}
         setEnteredValues={setEnteredValues}
+        handleClear={clearField}
+        handleReset={resetBoard}
         restricted={true}
         restrictedOptions={unplayedTiles} />
     </div>

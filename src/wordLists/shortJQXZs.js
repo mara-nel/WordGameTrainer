@@ -15,12 +15,12 @@ const shortJQXZs = {
     'jiff', 'jigs', 'jill', 'jilt', 'jimp', 'jink', 'jinn', 
     'jins', 'jinx', 'jird', 'jism', 'jive', 'jivy', 'jizz',
     'jobs', 'jock', 'joes', 'joey', 'jogs', 'john', 'join',
-    'joke', 'joky', 'jole', 'jolt', 'jook', 'josh', 'josh',
-    'joss', 'jota', 'jots', 'jouk', 'jowl', 'jows', 'joys', 
-    'juba', 'jube', 'juco', 'judo', 'judy', 'juga', 'jugs',
-    'juju', 'juke', 'juku', 'jump', 'jupe', 'jura', 'jury', 
-    'just', 'jute', 'juts', 'koji', 'mojo', 'puja', 'raja', 
-    'soja', 'soju'
+    'joke', 'joky', 'jole', 'jolt', 'jook', 'josh', 'joss', 
+    'jota', 'jots', 'jouk', 'jowl', 'jows', 'joys', 'juba',
+    'jube', 'juco', 'judo', 'judy', 'juga', 'jugs', 'juju',
+    'juke', 'juku', 'jump', 'jupe', 'jura', 'jury', 'just',
+    'jute', 'juts', 'koji', 'mojo', 'puja', 'raja', 'soja',
+    'soju'
   ],
   'q' : [
     'qi',

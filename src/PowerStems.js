@@ -1,7 +1,6 @@
 import { useState } from "react";
 import bingoStems from "./wordLists/bingoStems";
 import RoundManager from "./RoundManager";
-import "./PowerStems.css";
 
 const rounds = ['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z'];
 
@@ -22,15 +21,13 @@ const PowerStems = () => {
   return (
     <div>
       <div className="subtitle">practice your power bingo stems</div>
-
-      <label>Current Stem: 
+      <label>Stem: 
         <select 
           id="stemSelect" 
           onChange={switchStem}
-          value={currentStem}
-          >
-          {stemOptions}
-        </select> + ?
+          value={currentStem}>
+            {stemOptions}
+        </select>
       </label>
       <RoundManager 
         masterWords={bingoStems[currentStem]}

@@ -1,27 +1,24 @@
 #rack {
   display: flex;
-  margin: 1em 0 .4em 0;
-  min-height: 50px;
+  margin: 1rem 0 .4rem 0;
+
+  background-image: -ms-linear-gradient(to top, #a00 80%, rgba(0,0,0,0) 20%);
+  background-image: -o-linear-gradient(to top, #a00 80%, rgba(0,0,0,0) 20%);
+  background-image: -moz-linear-gradient(to top, #a00 80%, rgba(0,0,0,0) 20%);
+  background-image: -webkit-linear-gradient(to top, #a00 80%, rgba(0,0,0,0) 20%);
+  background-image: linear-gradient(to top, #a00 80%, rgba(0,0,0,0) 20%);
+
+  padding-left: .4rem;
+  border-radius: 4px;
+  border-bottom: 6px solid red;
+  min-height: 2.5rem;
 }
+
 #rack kbd {
-  margin: .15em .3em .15em 0;
-  margin-left: 0;
+  margin: auto 3px 3px 0;
 }
 #rack kbd:last-child {
   margin-right: auto;
 }
-kbd.tile {
-  border-radius: 3px;
-  border: 2px solid black;
-  text-transform: capitalize;
-  
-  display: inline-block;
-  width: 2ch;
-  font-size: 2em;
-  height: 2ch;
-  text-align: center;
-} 
-kbd.played {
-  display: none;
-}
+
 
