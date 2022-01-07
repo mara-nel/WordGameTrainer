@@ -1,12 +1,13 @@
 import { useRef, useEffect } from "react";
 import "./Rack.css";
 
-const Rack = ({ tiles, playedTiles }) => {
+const Rack = ({ tiles, shuffle, unshuffle }) => {
 
   const rackRef = useRef(null);
 
   useEffect(() => {
-    unShuffleRack();
+    //unShuffleRack();
+    updateRack();
   }, [tiles]);
 
 
@@ -38,19 +39,30 @@ const Rack = ({ tiles, playedTiles }) => {
         data-order={`"${i}"`}
       >{tiles[i]}</kbd>);
   }
+  const updateRack = () =>{
+    rows = [];
+    for (let i=0; i < tiles.length; i++) {
+      rows.push(
+        <kbd 
+          key={i}
+          className="tile" 
+          data-order={`"${i}"`}
+        >{tiles[i]}</kbd>);
+    }
+  }
 
   return (
     <div>
       <div ref={rackRef} id="rack">
         {rows}
       </div>
-      <div id="rackActions" className="buttonWrapper">
+      <div className="buttonWrapper">
         <button 
           type="button" 
-          onClick={shuffleRack}>Shuffle</button>
+          onClick={shuffle}>Shuffle</button>
         <button 
           type="button" 
-          onClick={unShuffleRack}>Unshuffle</button>
+          onClick={unshuffle}>Unshuffle</button>
       </div>
     </div>
   );
