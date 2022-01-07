@@ -1,6 +1,5 @@
 import twoLetterHooks from "./wordLists/twoLetterHooks";
 import RoundManager from "./RoundManager";
-import "./PowerStems.css";
 
 const TwoHooks = () => {
 
