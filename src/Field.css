@@ -1,7 +1,6 @@
 form#field {
   margin: 1em auto .5em 0;
   display: inline-flex;
-  align-items: baseline;
   background-color: #505153;
   padding: 3px;
   border-radius: 3px;
@@ -16,6 +15,7 @@ form#field {
   margin-right: 3px;
   border-radius: 3px;
   height: 2.1rem;
+  background-color: #202123;
 }
 
 #field input:last-child {
@@ -27,6 +27,12 @@ form#field {
 }
 
 #field input.empty {
-  background-color: #202123;
 }
 
+#field .tile {
+  margin-right: 3px;
+}
+
+#field .tile:last-child {
+  margin-right: 0;
+}
