@@ -22,9 +22,10 @@ form#field {
   margin-right: 0;
 }
 
-#field input:focus {
+#field input:focus, #field input.focused {
   outline: 2px solid #a00;
 }
+
 
 #field input.empty {
 }

@@ -7,7 +7,17 @@ function isLetter(str) {
   return str.length === 1 && str.match(/[a-z]/i);
 }
 
-const Field = React.forwardRef(({restricted, restrictedOptions, enteredValues, playTile, handleClear, handleReset, unPlayTile}, ref) => {
+const Field = React.forwardRef(({
+    restricted, 
+    restrictedOptions, 
+    enteredValues, 
+    playTile, 
+    handleClear, 
+    handleReset, 
+    focus,
+    setFocus,
+    unPlayTile
+  }, ref) => {
 
   //const fieldRefs = useRef(Array(enteredValues.length));
   const fieldRefs = ref;
@@ -31,7 +41,6 @@ const Field = React.forwardRef(({restricted, restrictedOptions, enteredValues, p
       //updateEnteredValues(key, value);
       goToNextSlot(key);
     }
-    console.log(event.target.value);
   }
 
   const goToNextSlot = (startingIndex) => {
@@ -85,19 +94,10 @@ const Field = React.forwardRef(({restricted, restrictedOptions, enteredValues, p
       if (index > 0 && !e.target.value) {
         if (values[index - 1] !== '') {
           values[index - 1] = '';
-          //setEnteredValues(values);
           unPlayTile(enteredValues[index - 1], index -1);
-        } else {
-          //fieldRefs.current[index - 1]?.select();
-          fieldRefs.current[index - 1]?.focus();
         }
+        setFocus(index-1);
       }
-     /* 
-    } else if (e.key === 'Enter') {
-      if (!enteredValues.includes('')) {
-        handleReset();
-      }
-      */
     }
   }
 
@@ -122,11 +122,13 @@ const Field = React.forwardRef(({restricted, restrictedOptions, enteredValues, p
     rows.push(
       <input 
         ref={el => fieldRefs.current[i] = el}
+        className={focus === i ? 'focused' : ''}
         type="text" 
         key={i}
         maxLength="1" 
         data-order={i}
         autoComplete="new-password"
+        onFocus={() => setFocus(i)}
         onInput={handleInput}
         onKeyDown={handleKeyDown}
         onClick={selectInput}
@@ -137,7 +139,7 @@ const Field = React.forwardRef(({restricted, restrictedOptions, enteredValues, p
 
   return (
     <div>
-      <form className={"elevated"} id="field">
+      <form className={"elevated"} id="field" >
         {rows}
       </form>
       <div className="buttonWrapper">

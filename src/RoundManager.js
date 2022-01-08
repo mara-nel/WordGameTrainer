@@ -169,6 +169,7 @@ const RoundManager = ({masterWords, rounds, roundsSelectable, tiles, tilesFirst,
     setRoundsFoundWords([]);
     let index = rounds.indexOf(roundTiles);
     setRoundTiles(index !== rounds.length -1 ? rounds[index + 1] : rounds[0]);
+    nextRoundRef.current?.blur();
   }
 
   return (

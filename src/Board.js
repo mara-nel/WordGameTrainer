@@ -1,9 +1,10 @@
-import { useEffect, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import Rack from "./Rack";
 import Field from "./Field";
 
-const Board = ({tiles, boardState, setBoardState, checkWord, roundComplete }) => {
+const Board = ({tiles, boardState, setBoardState, checkWord }) => {
 
+  const [fieldFocus, setFieldFocus] = useState(-1);
   const fieldRefs = useRef(Array(boardState.field.length));
 
   useEffect(() => {
@@ -13,13 +14,19 @@ const Board = ({tiles, boardState, setBoardState, checkWord, roundComplete }) =>
     return () => {
       document.removeEventListener('keydown', handleKeyDown);
     }
-  }, [boardState]);
+  }, [boardState, fieldFocus]);
+
+  useEffect(() => {
+    if (fieldFocus > -1) {
+      fieldRefs.current[fieldFocus]?.focus();
+    }
+  }, [fieldFocus]);
 
   useEffect(() => {
     if (!boardState.field.includes('')) {
       checkWord(getWordFromEnteredValues());
+      setFieldFocus(-1);
     }
-    console.log('checking word v2');
   }, [boardState]);
 
 
@@ -35,11 +42,11 @@ const Board = ({tiles, boardState, setBoardState, checkWord, roundComplete }) =>
       rack: Array.from(tiles),
       field: Array(boardState.field.length).fill('')
     });
-    console.log(roundComplete);
-    if (!roundComplete) {
-      fieldRefs.current[0]?.focus();
-    }
-    console.log('reset, focused?');
+
+    //fieldRefs.current[0]?.focus();
+    setFieldFocus(-1);
+
+    console.log('reset, focused?', fieldFocus);
   }
 
   const clearField = () => {
@@ -50,7 +57,8 @@ const Board = ({tiles, boardState, setBoardState, checkWord, roundComplete }) =>
       rack: [...boardState.rack, ...processedLetters],
       field: Array(boardState.field.length).fill('')
     });
-    fieldRefs.current[0]?.focus();
+    //fieldRefs.current[0]?.focus();
+    setFieldFocus(-1);
   }
 
   /*
@@ -95,9 +103,14 @@ const Board = ({tiles, boardState, setBoardState, checkWord, roundComplete }) =>
     if (fieldIndex !== undefined) {
       newField[fieldIndex] = letter;
     } else {
-      let firstEmpty = boardState.field.indexOf('');
-      if (firstEmpty > -1) { 
-        newField[firstEmpty] = letter;
+      if (fieldFocus >= 0) {
+        newField[fieldFocus] = letter;
+        setFieldFocus(-1);
+      } else {
+        let firstEmpty = boardState.field.indexOf('');
+        if (firstEmpty > -1) { 
+          newField[firstEmpty] = letter;
+        }
       }
     }
 
@@ -173,6 +186,16 @@ const Board = ({tiles, boardState, setBoardState, checkWord, roundComplete }) =>
       if (boardState.rack.length === 0) {
         resetBoard();
       }
+    } else if (e.key === 'Backspace') {
+      if (!boardState.field.includes('')) {
+        unPlayTile(boardState.field[boardState.field.length-1], boardState.field.length-1);
+        setFieldFocus(boardState.field.length-1);
+      }
+    } else if (boardState.rack.includes(e.key)) {
+      console.log(e.key,fieldFocus, boardState.field[0]);
+      if (fieldFocus === -1) {
+        fieldRefs.current[boardState.field.indexOf('')]?.focus();
+      }
     }
   }
 
@@ -190,6 +213,8 @@ const Board = ({tiles, boardState, setBoardState, checkWord, roundComplete }) =>
         handleClear={tiles.includes('*') ? resetBoard : clearField}
         playTile={playTile}
         unPlayTile={unPlayTile}
+        focus={fieldFocus}
+        setFocus={setFieldFocus}
         restricted={true}
         restrictedOptions={boardState.rack} />
     </div>
