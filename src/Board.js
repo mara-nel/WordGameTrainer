@@ -1,68 +1,70 @@
-import { useState, useEffect } from "react";
+import { useEffect, useRef } from "react";
 import Rack from "./Rack";
 import Field from "./Field";
 
-const Board = ({tiles, enteredValues, setEnteredValues, checkWord }) => {
-  const [unplayedTiles, setUnplayedTiles] = useState(Array.from(tiles));
+const Board = ({tiles, boardState, setBoardState, checkWord, roundComplete }) => {
+
+  const fieldRefs = useRef(Array(boardState.field.length));
 
   useEffect(() => {
-    resetBoard();
-  }, [tiles]);
+    document.addEventListener('keydown', handleKeyDown);
+    console.log('event listener added');
+
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+    }
+  }, [boardState]);
 
   useEffect(() => {
-    if (unplayedTiles.length === 0) {
+    if (!boardState.field.includes('')) {
       checkWord(getWordFromEnteredValues());
     }
-  }, [unplayedTiles]);
-
-  
-  useEffect(() => {
-    syncTiles();
-  }, [enteredValues]);
+    console.log('checking word v2');
+  }, [boardState]);
 
 
   const getWordFromEnteredValues = () => {
     let word = '';
-    enteredValues.forEach( l => word += l);
+    boardState.field.forEach( l => word += l);
     return word;
   }
 
-  const unshuffleUnplayedTiles = () => {
-    let remaining = Array.from(tiles);
-    let enteredLetters = enteredValues.filter(l => l !== '');
-    enteredLetters.forEach(function(c) {
-      let i = remaining.indexOf(c);
-      if (i > -1) {
-        remaining.splice(i, 1);
-      } else if (remaining.includes('*')) {
-        remaining.splice(remaining.indexOf('*'), 1);
-      }
-    });
-    setUnplayedTiles(remaining);
-  }
 
   const resetBoard = () => {
-    setUnplayedTiles(Array.from(tiles));
-    setEnteredValues(Array(enteredValues.length).fill(''));
+    setBoardState({
+      rack: Array.from(tiles),
+      field: Array(boardState.field.length).fill('')
+    });
+    console.log(roundComplete);
+    if (!roundComplete) {
+      fieldRefs.current[0]?.focus();
+    }
+    console.log('reset, focused?');
   }
 
   const clearField = () => {
-    let enteredLetters = enteredValues.filter(l => l !== '');
-    setUnplayedTiles([...unplayedTiles, ...enteredLetters]);
-    setEnteredValues(Array(enteredValues.length).fill(''));
+    let enteredLetters = boardState.field.filter(l => l !== '');
+    // fails when * is the value of something on the field
+    let processedLetters = enteredLetters.map(l => isWild(l) ? '*' : l);
+    setBoardState({
+      rack: [...boardState.rack, ...processedLetters],
+      field: Array(boardState.field.length).fill('')
+    });
+    fieldRefs.current[0]?.focus();
   }
 
+  /*
   const syncTiles = () => {
     const tileCounts = {};
     Array.from(tiles).forEach(l => tileCounts[l] 
       ? tileCounts[l]++ 
       : tileCounts[l] = 1);
-    let enteredLetters = enteredValues.filter(l => l !== '');
+    let enteredLetters = boardState.field.filter(l => l !== '');
     enteredLetters.forEach(l =>  tileCounts[l] 
       ? tileCounts[l]--
       : tileCounts['*']--); //assumes input restriction working
     let orderedNew = [];
-    let orderedOld = unplayedTiles;
+    let orderedOld = boardState.rack;
     for (let i=orderedOld.length-1; i>=0; i--) {
       let l = orderedOld[i];
       if (tileCounts[l] > 0) {
@@ -76,41 +78,120 @@ const Board = ({tiles, enteredValues, setEnteredValues, checkWord }) => {
         orderedNew.push(...Array(tileCounts[l]).fill(l));
       }
     });
-    setUnplayedTiles(orderedNew);
+
+    setBoardState({
+      rack: orderedNew,
+      field: [...boardState.field]
+    });
+  }
+  */
+  
+  // doesnt handle wildcards
+  const playTile = (letter, rackIndex, fieldIndex?) => {
+    let newRack = [...boardState.rack];
+    newRack.splice(rackIndex, 1);
+
+    let newField = [...boardState.field];
+    if (fieldIndex !== undefined) {
+      newField[fieldIndex] = letter;
+    } else {
+      let firstEmpty = boardState.field.indexOf('');
+      if (firstEmpty > -1) { 
+        newField[firstEmpty] = letter;
+      }
+    }
+
+    setBoardState({
+      rack: newRack,
+      field: newField
+    });
   }
 
-  const shuffleUnplayedTiles = () => {
-    let array = [...unplayedTiles];
+  //doesnt handle wildcards
+  // * doesn't preserve wildcards
+  const unPlayTile = (letter, fieldIndex) => {
+    let newRack = [
+      ...boardState.rack, 
+      isWild(letter) ? '*' : letter
+    ];
+    let newField = [...boardState.field];
+    newField[fieldIndex] = '';
+
+    setBoardState({
+      rack: newRack,
+      field: newField
+    });
+  }
+
+  const isWild = (letter) => {
+    let frequencyInTiles = Array.from(tiles).filter(l => l===letter).length;
+    let frequencyInRack = boardState.rack.filter(l => l===letter).length
+    return frequencyInTiles - frequencyInRack === 0;
+  }
+
+  const shuffleRack = () => {
+    let array = [...boardState.rack];
     for (var i = array.length - 1; i > 0; i--) {
         var j = Math.floor(Math.random() * (i + 1));
         var temp = array[i];
         array[i] = array[j];
         array[j] = temp;
     }
-    setUnplayedTiles(array);
+
+    setBoardState({
+      ...boardState,
+      rack: array
+    });
+  }
+
+  const unshuffleRack = () => {
+    let remaining = Array.from(tiles);
+    let enteredLetters = boardState.field.filter(l => l !== '');
+    enteredLetters.forEach(function(c) {
+      let i = remaining.indexOf(c);
+      if (i > -1) {
+        remaining.splice(i, 1);
+      } else if (remaining.includes('*')) {
+        remaining.splice(remaining.indexOf('*'), 1);
+      }
+    });
+
+    setBoardState({
+      ...boardState,
+      rack: remaining
+    });
   }
 
   const handleKeyDown = (e) => {
     if (e.key === ' ' || e.key === 'Space') {
-      shuffleUnplayedTiles();
+      shuffleRack();
+      console.log('space');
     } else if (e.key === 'Shift') {
-      unshuffleUnplayedTiles();
+      unshuffleRack();
+      console.log('shift');
+    } else if (e.key === 'Enter') {
+      if (boardState.rack.length === 0) {
+        resetBoard();
+      }
     }
   }
 
   return (
-    <div onKeyDown={handleKeyDown}>
+    <div>
       <Rack 
-        tiles={unplayedTiles}
-        shuffle={shuffleUnplayedTiles}
-        unshuffle={unshuffleUnplayedTiles}/>
+        reset={resetBoard}
+        tiles={boardState.rack}
+        shuffle={shuffleRack}
+        playTile={playTile}
+        unshuffle={unshuffleRack}/>
       <Field 
-        enteredValues={enteredValues}
-        setEnteredValues={setEnteredValues}
-        handleClear={clearField}
-        handleReset={resetBoard}
+        ref={fieldRefs}
+        enteredValues={boardState.field}
+        handleClear={tiles.includes('*') ? resetBoard : clearField}
+        playTile={playTile}
+        unPlayTile={unPlayTile}
         restricted={true}
-        restrictedOptions={unplayedTiles} />
+        restrictedOptions={boardState.rack} />
     </div>
   );
 

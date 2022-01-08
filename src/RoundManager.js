@@ -26,6 +26,11 @@ const RoundManager = ({masterWords, rounds, roundsSelectable, tiles, tilesFirst,
   const [roundsFoundWords, setRoundsFoundWords] = useState([]);
   const [roundComplete, setRoundComplete] = useState(false);
   //console.log(enteredValues);
+  const [unplayedTiles, setUnplayedTiles] = useState(Array.from(tiles));
+  const [boardState, setBoardState] = useState({
+    rack  : Array.from(tilesFirst ? tiles + roundTiles : roundTiles + tiles),
+    field : Array(tiles.length + roundTiles.length).fill('')
+  });
 
   const [dictionary, setDictionary] = useState(defaultDictionary);
 
@@ -33,9 +38,16 @@ const RoundManager = ({masterWords, rounds, roundsSelectable, tiles, tilesFirst,
   //console.log(masterWords, rounds, roundTiles, masterWords[roundTiles]);
 
   useEffect(() => {
-    clearField();
+    //clearField();
+    setBoardState({
+      rack  : Array.from(tilesFirst ? tiles + roundTiles : roundTiles + tiles),
+      field : Array(tiles.length + roundTiles.length).fill('')
+    });
+
     setRoundsFoundWords([]);
-  }, [tiles, roundTiles]);
+    //setUnplayedTiles(tilesFirst ? tiles + roundTiles : roundTiles + tiles); 
+    console.log('cleared field, reset found words, reset rack');
+  }, [tiles, roundTiles, tilesFirst]);
 
   useEffect(() => {
     setRoundTiles(rounds[0]);
@@ -221,8 +233,9 @@ const RoundManager = ({masterWords, rounds, roundsSelectable, tiles, tilesFirst,
       <Board 
         tiles={tilesFirst ? tiles + roundTiles : roundTiles + tiles} 
         checkWord={checkWord} 
-        enteredValues={enteredValues} 
-        setEnteredValues={setEnteredValues}/>
+        boardState={boardState}
+        setBoardState={setBoardState}
+        roundComplete={roundComplete} />
       <FoundWordsList 
         words={foundWords}
         dictionary={dictionary} />
