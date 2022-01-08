@@ -40,7 +40,7 @@ const RoundManager = ({masterWords, rounds, roundsSelectable, tiles, tilesFirst,
     });
 
     setRoundsFoundWords([]);
-    console.log('cleared field, reset found words, reset rack');
+    //console.log('cleared field, reset found words, reset rack');
   }, [tiles, roundTiles, tilesFirst]);
 
   useEffect(() => {

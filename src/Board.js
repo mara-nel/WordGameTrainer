@@ -9,7 +9,7 @@ const Board = ({tiles, boardState, setBoardState, checkWord }) => {
 
   useEffect(() => {
     document.addEventListener('keydown', handleKeyDown);
-    console.log('event listener added');
+    //console.log('event listener added');
 
     return () => {
       document.removeEventListener('keydown', handleKeyDown);
@@ -45,8 +45,6 @@ const Board = ({tiles, boardState, setBoardState, checkWord }) => {
 
     //fieldRefs.current[0]?.focus();
     setFieldFocus(-1);
-
-    console.log('reset, focused?', fieldFocus);
   }
 
   const clearField = () => {
@@ -178,10 +176,10 @@ const Board = ({tiles, boardState, setBoardState, checkWord }) => {
   const handleKeyDown = (e) => {
     if (e.key === ' ' || e.key === 'Space') {
       shuffleRack();
-      console.log('space');
+      //console.log('space');
     } else if (e.key === 'Shift') {
       unshuffleRack();
-      console.log('shift');
+      //console.log('shift');
     } else if (e.key === 'Enter') {
       if (boardState.rack.length === 0) {
         resetBoard();
@@ -192,7 +190,7 @@ const Board = ({tiles, boardState, setBoardState, checkWord }) => {
         setFieldFocus(boardState.field.length-1);
       }
     } else if (boardState.rack.includes(e.key)) {
-      console.log(e.key,fieldFocus, boardState.field[0]);
+      //console.log(e.key,fieldFocus, boardState.field[0]);
       if (fieldFocus === -1) {
         fieldRefs.current[boardState.field.indexOf('')]?.focus();
       }
