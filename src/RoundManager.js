@@ -22,11 +22,7 @@ export const defaultDictionary =
 const RoundManager = ({masterWords, rounds, roundsSelectable, tiles, tilesFirst, roundMessage}) => {
   const [roundTiles, setRoundTiles] = useState(rounds[0]);
   const [foundWords, setFoundWords] = useState([]);
-  const [enteredValues, setEnteredValues] = useState(Array(tiles.length + roundTiles.length).fill(''));
   const [roundsFoundWords, setRoundsFoundWords] = useState([]);
-  const [roundComplete, setRoundComplete] = useState(false);
-  //console.log(enteredValues);
-  const [unplayedTiles, setUnplayedTiles] = useState(Array.from(tiles));
   const [boardState, setBoardState] = useState({
     rack  : Array.from(tilesFirst ? tiles + roundTiles : roundTiles + tiles),
     field : Array(tiles.length + roundTiles.length).fill('')
@@ -38,14 +34,12 @@ const RoundManager = ({masterWords, rounds, roundsSelectable, tiles, tilesFirst,
   //console.log(masterWords, rounds, roundTiles, masterWords[roundTiles]);
 
   useEffect(() => {
-    //clearField();
     setBoardState({
       rack  : Array.from(tilesFirst ? tiles + roundTiles : roundTiles + tiles),
       field : Array(tiles.length + roundTiles.length).fill('')
     });
 
     setRoundsFoundWords([]);
-    //setUnplayedTiles(tilesFirst ? tiles + roundTiles : roundTiles + tiles); 
     console.log('cleared field, reset found words, reset rack');
   }, [tiles, roundTiles, tilesFirst]);
 
@@ -55,22 +49,12 @@ const RoundManager = ({masterWords, rounds, roundsSelectable, tiles, tilesFirst,
 
   useEffect(() => {
     if (roundsFoundWords.length === masterWords[roundTiles]?.length) {
-      setRoundComplete(true);
       nextRoundRef.current?.focus();
       var audio = new Audio(Bell);
       audio.volume = 0.2;
       audio.play();
-    } else {
-      setRoundComplete(false);
     }
   }, [roundsFoundWords, roundTiles, masterWords]);
-
-  // trying to put focus on a button???
-  useEffect(() => {
-    if (roundComplete) {
-      nextRoundRef.current?.focus();
-    }
-  }, [roundComplete]);
 
   useEffect(() => {
     window.localStorage.setItem(
@@ -79,16 +63,12 @@ const RoundManager = ({masterWords, rounds, roundsSelectable, tiles, tilesFirst,
     );
   }, [dictionary]);
 
-  const clearField = () => {
-    setEnteredValues(Array(tiles.length + roundTiles.length).fill(''));
-  }
 
   const wordsBeingSearchedFor = () => {
     return masterWords[roundTiles];
   }
 
   const showUnfoundWords = () => {
-    //let promises = [];
     let unfoundWords = wordsBeingSearchedFor().filter(
       word => !roundsFoundWords.includes(word)
     );
@@ -139,7 +119,6 @@ const RoundManager = ({masterWords, rounds, roundsSelectable, tiles, tilesFirst,
   }
 
   const newWordFound = (word) => {
-    //var audio = new Audio('sounds/zapsplat_pop.mp3');
     var audio = new Audio(Pop);
     audio.volume = 0.2;
     audio.play();
@@ -180,7 +159,6 @@ const RoundManager = ({masterWords, rounds, roundsSelectable, tiles, tilesFirst,
 
   const handleYield = () => {
     showUnfoundWords();
-    setRoundComplete(true);
   }
 
   const handleRoundSelect = (e) => {
@@ -191,7 +169,6 @@ const RoundManager = ({masterWords, rounds, roundsSelectable, tiles, tilesFirst,
     setRoundsFoundWords([]);
     let index = rounds.indexOf(roundTiles);
     setRoundTiles(index !== rounds.length -1 ? rounds[index + 1] : rounds[0]);
-    //setRoundTiles(newLetter);
   }
 
   return (
@@ -216,7 +193,7 @@ const RoundManager = ({masterWords, rounds, roundsSelectable, tiles, tilesFirst,
         <div className="buttonWrapper">
           <button 
             type="button" 
-            disabled={roundComplete}
+            disabled={roundsFoundWords.length === masterWords[roundTiles]?.length}
             onClick={handleYield}>
               I Yield
           </button>
@@ -224,7 +201,7 @@ const RoundManager = ({masterWords, rounds, roundsSelectable, tiles, tilesFirst,
             type="button" 
             id="nextLetter"
             ref={nextRoundRef}
-            disabled={!roundComplete}
+            disabled={roundsFoundWords.length !== masterWords[roundTiles]?.length}
             onClick={goToNextRound}>
               Next Letter
           </button>
@@ -234,8 +211,7 @@ const RoundManager = ({masterWords, rounds, roundsSelectable, tiles, tilesFirst,
         tiles={tilesFirst ? tiles + roundTiles : roundTiles + tiles} 
         checkWord={checkWord} 
         boardState={boardState}
-        setBoardState={setBoardState}
-        roundComplete={roundComplete} />
+        setBoardState={setBoardState} />
       <FoundWordsList 
         words={foundWords}
         dictionary={dictionary} />
