@@ -50,6 +50,8 @@ const Field = React.forwardRef(({
         fieldRefs.current[nextInputIndex]?.focus();
         //fieldRefs.current[nextInputIndex]?.select();
       }
+    } else {
+      setFocus(-1);
     }
   }
 
