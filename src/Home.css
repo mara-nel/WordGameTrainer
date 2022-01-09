@@ -14,16 +14,16 @@ nav a {
   font-size: 1.4rem;
   color: #eee;
   border-radius: 6px;
-  //background: #a00;
+  //background: #9D0000;
   //box-shadow: 0 -4px 0 0 #400;
 
-  background-image: -ms-linear-gradient(to top, #a00 80%, rgba(0,0,0,0) 20%);
-  background-image: -o-linear-gradient(to top, #a00 80%, rgba(0,0,0,0) 20%);
-  background-image: -moz-linear-gradient(to top, #a00 80%, rgba(0,0,0,0) 20%);
-  background-image: -webkit-linear-gradient(to top, #a00 80%, rgba(0,0,0,0) 20%);
-  background-image: linear-gradient(to top, #a00 80%, rgba(0,0,0,0) 20%);
+  background-image: -ms-linear-gradient(to top, #9D0000 80%, rgba(0,0,0,0) 20%);
+  background-image: -o-linear-gradient(to top, #9D0000 80%, rgba(0,0,0,0) 20%);
+  background-image: -moz-linear-gradient(to top, #9D0000 80%, rgba(0,0,0,0) 20%);
+  background-image: -webkit-linear-gradient(to top, #9D0000 80%, rgba(0,0,0,0) 20%);
+  background-image: linear-gradient(to top, #9D0000 80%, rgba(0,0,0,0) 20%);
 
-  border-bottom: 6px solid red;
+  border-bottom: 6px solid #e00;
   padding-left: .5em;
   border-radius: 4px;
 }
@@ -43,4 +43,7 @@ nav a:hover {
 
 nav a:active {
   transform: translateY(2px);
+}
+nav a .tile {
+  margin-bottom: 2px;
 }

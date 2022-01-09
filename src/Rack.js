@@ -1,60 +1,19 @@
-import { useRef, useEffect } from "react";
+import Tile from "./Tile.js";
 import "./Rack.css";
 
-const Rack = ({ tiles, shuffle, unshuffle }) => {
-
-  const rackRef = useRef(null);
-
-  useEffect(() => {
-    //unShuffleRack();
-    updateRack();
-  }, [tiles]);
-
-
-  const shuffleRack = () => {
-    for (let i = rackRef.current?.children.length; i >= 0; i--) {
-      rackRef.current?.appendChild(rackRef.current?.children[Math.random() * i | 0]);
-    }
-  }
-
-  const unShuffleRack = () => {
-    var sortByDataOrder = function(a, b) {
-      return a.dataset.order.localeCompare(b.dataset.order);
-    }
-
-    let rackArray = Array.prototype.slice.call(rackRef.current?.children);
-    rackArray.sort(sortByDataOrder);
-    for (let i=0; i < rackArray.length; i++) {
-      let detatchedTile = rackRef.current?.removeChild(rackArray[i]);
-      rackRef.current?.appendChild(detatchedTile);
-    }
-  }
-
-  let rows = [];
-  for (let i=0; i < tiles.length; i++) {
-    rows.push(
-      <kbd 
-        key={i}
-        className="tile" 
-        data-order={`"${i}"`}
-      >{tiles[i]}</kbd>);
-  }
-  const updateRack = () =>{
-    rows = [];
-    for (let i=0; i < tiles.length; i++) {
-      rows.push(
-        <kbd 
-          key={i}
-          className="tile" 
-          data-order={`"${i}"`}
-        >{tiles[i]}</kbd>);
-    }
-  }
+const Rack = ({ reset, tiles, shuffle, unshuffle, playTile }) => {
 
   return (
     <div>
-      <div ref={rackRef} id="rack">
-        {rows}
+      <div onClick={() => {if(tiles.length === 0) reset()}}id="rack">
+        {Array.from(tiles).map((l,i) => 
+          <Tile 
+            letter={l} 
+            key={i} 
+            isWild={false}
+            handleClick={() =>
+              { if(l !== '*') playTile(l, i)}
+            }/>)}
       </div>
       <div className="buttonWrapper">
         <button 

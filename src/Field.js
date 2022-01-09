@@ -1,28 +1,55 @@
-import { useRef, useEffect } from "react";
+import React from "react";
+import { useEffect } from "react";
+import Tile from "./Tile.js";
 import "./Field.css";
 
 function isLetter(str) {
   return str.length === 1 && str.match(/[a-z]/i);
 }
 
-const Field = ({restricted, restrictedOptions, enteredValues, setEnteredValues, handleClear, handleReset}) => {
+const Field = React.forwardRef(({
+    restricted, 
+    restrictedOptions, 
+    enteredValues, 
+    playTile, 
+    handleClear, 
+    handleReset, 
+    focus,
+    setFocus,
+    unPlayTile
+  }, ref) => {
 
-  const inputRefs = useRef(Array(enteredValues.length));
+  //const fieldRefs = useRef(Array(enteredValues.length));
+  const fieldRefs = ref;
 
+    /*
   useEffect(() => {
     let isEmpty = true;
     enteredValues.forEach(l => {if (l!=='') { isEmpty = false }} );
     if (isEmpty) {
-      inputRefs.current[0]?.focus();
+      fieldRefs.current[0]?.focus();
     }
   }, [enteredValues]);
+    */
 
   const handleInput = (event) => {
     let key = parseInt(event.target.getAttribute("data-order"));
     let value = event.target.value.toLowerCase();
-  
+ 
     if (validValue(value)) {
-      updateEnteredValues(key, value);
+      playTile(value, restrictedOptions.indexOf(value), key);
+      //updateEnteredValues(key, value);
+      goToNextSlot(key);
+    }
+  }
+
+  const goToNextSlot = (startingIndex) => {
+    if (startingIndex !== enteredValues.length - 1) {
+      let nextInputIndex = getNextInputIndex(startingIndex);
+      if (nextInputIndex !== -1) {
+        fieldRefs.current[nextInputIndex]?.focus();
+        //fieldRefs.current[nextInputIndex]?.select();
+      }
     }
   }
 
@@ -38,6 +65,7 @@ const Field = ({restricted, restrictedOptions, enteredValues, setEnteredValues, 
     }
   }
 
+  /*
   const updateEnteredValues = (index, value) => {
     let values = [...enteredValues];
     values[index] = value;
@@ -45,9 +73,18 @@ const Field = ({restricted, restrictedOptions, enteredValues, setEnteredValues, 
     setEnteredValues(values);
 
     if (index !== enteredValues.length - 1) {
-      inputRefs.current[index + 1]?.focus();
-      inputRefs.current[index + 1]?.select();
+      let nextInputIndex = getNextInputIndex(index);
+      if (nextInputIndex !== -1) {
+        fieldRefs.current[nextInputIndex]?.focus();
+        //fieldRefs.current[nextInputIndex]?.select();
+      }
     }
+  }
+  */
+  const getNextInputIndex = (index) => {
+    let laterLocations = [...enteredValues].slice(index + 1);
+
+    return laterLocations.indexOf('') + index + 1;
   }
 
   const handleKeyDown = (e) => {
@@ -55,14 +92,11 @@ const Field = ({restricted, restrictedOptions, enteredValues, setEnteredValues, 
     if (e.key === 'Backspace') {
       let values = [...enteredValues];
       if (index > 0 && !e.target.value) {
-        values[index - 1] = '';
-        inputRefs.current[index - 1]?.select();
-      }
-      values[index] = '';
-      setEnteredValues(values);
-    } else if (e.key === 'Enter') {
-      if (!enteredValues.includes('')) {
-        handleReset();
+        if (values[index - 1] !== '') {
+          values[index - 1] = '';
+          unPlayTile(enteredValues[index - 1], index -1);
+        }
+        setFocus(index-1);
       }
     }
   }
@@ -74,26 +108,38 @@ const Field = ({restricted, restrictedOptions, enteredValues, setEnteredValues, 
 
   let rows = [];
   for (let i=0; i < enteredValues.length; i++) {
+      if (enteredValues[i] !== '') {
+    rows.push(
+      <Tile 
+        key={i} 
+        ref={el => fieldRefs.current[i] = el}
+        letter={enteredValues[i]} 
+        isWild={enteredValues[i] === '*' }
+        input={true}
+        handleClick={() => unPlayTile(enteredValues[i], i )} />
+    );
+      } else {
     rows.push(
       <input 
-        ref={el => inputRefs.current[i] = el}
-        className={enteredValues[i] !== '' ? 'tile' : 'empty'}
+        ref={el => fieldRefs.current[i] = el}
+        className={focus === i ? 'focused' : ''}
         type="text" 
         key={i}
         maxLength="1" 
         data-order={i}
         autoComplete="new-password"
+        onFocus={() => setFocus(i)}
         onInput={handleInput}
         onKeyDown={handleKeyDown}
         onClick={selectInput}
         value={enteredValues[i]}
-      />
-    );
+      />);
+      }
   }
 
   return (
     <div>
-      <form className={"elevated"} id="field">
+      <form className={"elevated"} id="field" >
         {rows}
       </form>
       <div className="buttonWrapper">
@@ -103,6 +149,6 @@ const Field = ({restricted, restrictedOptions, enteredValues, setEnteredValues, 
       </div>
     </div>
   );
-}
+});
 
 export default Field;
