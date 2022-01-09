@@ -1,15 +1,15 @@
 {
   "files": {
     "main.css": "/WordGameTrainer/static/css/main.d549685d.css",
-    "main.js": "/WordGameTrainer/static/js/main.d8159f19.js",
+    "main.js": "/WordGameTrainer/static/js/main.a33100ee.js",
     "static/media/zapsplat_bell.mp3": "/WordGameTrainer/static/media/zapsplat_bell.1f0a06abbf85085d9f4e.mp3",
     "static/media/zapsplat_pop.mp3": "/WordGameTrainer/static/media/zapsplat_pop.7dc9e329db50a9365a80.mp3",
     "index.html": "/WordGameTrainer/index.html",
     "main.d549685d.css.map": "/WordGameTrainer/static/css/main.d549685d.css.map",
-    "main.d8159f19.js.map": "/WordGameTrainer/static/js/main.d8159f19.js.map"
+    "main.a33100ee.js.map": "/WordGameTrainer/static/js/main.a33100ee.js.map"
   },
   "entrypoints": [
     "static/css/main.d549685d.css",
-    "static/js/main.d8159f19.js"
+    "static/js/main.a33100ee.js"
   ]
 }
