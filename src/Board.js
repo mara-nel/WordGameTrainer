@@ -174,11 +174,8 @@ const Board = ({tiles, boardState, setBoardState, checkWord }) => {
   }
 
   const handleKeyDown = (e) => {
-    if (e.key === ' ' || e.key === 'Space') {
+    if (e.key === 'Shift') {
       shuffleRack();
-      //console.log('space');
-    } else if (e.key === 'Shift') {
-      unshuffleRack();
       //console.log('shift');
     } else if (e.key === 'Enter') {
       if (boardState.rack.length === 0) {
