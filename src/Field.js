@@ -1,5 +1,5 @@
 import React from "react";
-import { useEffect } from "react";
+// import { useEffect } from "react";
 import Tile from "./Tile.js";
 import "./Field.css";
 
@@ -13,7 +13,7 @@ const Field = React.forwardRef(({
     enteredValues, 
     playTile, 
     handleClear, 
-    handleReset, 
+  //  handleReset, 
     focus,
     setFocus,
     unPlayTile
@@ -50,6 +50,8 @@ const Field = React.forwardRef(({
         fieldRefs.current[nextInputIndex]?.focus();
         //fieldRefs.current[nextInputIndex]?.select();
       }
+    } else {
+      setFocus(-1);
     }
   }
 

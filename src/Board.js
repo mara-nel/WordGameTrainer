@@ -29,6 +29,10 @@ const Board = ({tiles, boardState, setBoardState, checkWord }) => {
     }
   }, [boardState]);
 
+  useEffect(() => {
+    setFieldFocus(-1);
+  }, [tiles]);
+
 
   const getWordFromEnteredValues = () => {
     let word = '';
