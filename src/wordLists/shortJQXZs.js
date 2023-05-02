@@ -33,7 +33,7 @@ const shortJQXZs = {
     'ax', 'ex', 'ox', 'xi', 'xu', 
     'axe', 'box', 'cox', 'dex', 'fax', 'fix', 'fox', 'gox',
     'hex', 'kex', 'lax', 'lex', 'lox', 'lux', 'max', 'mix',
-    'mux', 'nix', 'mux', 'oxo', 'oxy', 'pax', 'pix', 'pox',
+    'mux', 'nix', 'oxo', 'oxy', 'pax', 'pix', 'pox',
     'pyx', 'rax', 'rex', 'sax', 'sex', 'six', 'sox', 'tax',
     'tix', 'tux', 'vex', 'vox', 'wax', 'xed', 'xis', 'zax',
     'apex', 'axal', 'axed', 'axel', 'axes', 'axil', 'axis',
