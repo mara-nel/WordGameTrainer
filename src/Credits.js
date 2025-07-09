@@ -14,7 +14,7 @@ const Credits = () => {
     </p>
 
     <p>
-      This application has been designed and developed by <a href="https://wynnelson.com">Wyn Nelson</a>.
+      This application has been designed and developed by <a href="https://maranelson.com">Mara Nelson</a>.
     </p>
     </div>
 
